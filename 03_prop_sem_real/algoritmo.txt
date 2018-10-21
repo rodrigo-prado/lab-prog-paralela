@@ -1,0 +1,9 @@
+Variáveis: 
+	alcançado = falso
+Ação para fonte inicial da informação (inf): 
+	alcançado := verdadeiro; 
+	envie inf a todos os vizinhos;
+Ao receber inf: 
+	se alcançado = falso
+		alcançado := verdadeiro; 
+		envie inf a todos os vizinhos;

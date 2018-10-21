@@ -1,0 +1,15 @@
+Variáveis: 
+	pai := nil
+	count := 0;
+	alcançado := falso
+Ação para fonte inicial da informação (inf): 
+	alcançado := verdadeiro; 
+	envie inf a todos os vizinhos;
+Ao receber inf:
+	count := count + 1; 
+	se alcançado = falso
+		alcançado := verdadeiro; 
+		pai := origem(inf);
+		envie inf a todos os vizinhos exceto pai;
+	se count = |vizinhos| e pai != nil
+		envie inf para pai;

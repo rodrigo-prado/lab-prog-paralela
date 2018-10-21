@@ -1,0 +1,54 @@
+[Distancia minima - Algoritmo síncrono]
+
+Variáveis: 
+	dist(i) := 0; 
+	dist(k) := n para todo nó k ≠ i; 
+	first(k) = nil para todo nó k ≠ i; 
+	set = {id};
+
+Inicio: s=0, msg(0)={} 
+	se n ∈ N(0):
+		envie set para todos os vizinhos
+
+Entrada: 
+	0<s≤n-1,
+	msg(s) com set`s recebidos de nós n(j);
+
+	set := {}; 
+	para cada set recebido em msg
+		para cada id(k) em set 
+			se dist(k)>s
+				dist(k) := s; 
+				first(k) := n(j); 
+				set := set U {id(k)}
+	envie set para todos os vizinhos
+
+[Distância Mínima – Algoritmo Assíncrono]
+
+Variáveis: 
+	dist(i) := 0; 
+	dist(k) := n para todo nó k ≠ i; 
+	first(k) := nil para todo nó k ≠ i; 
+	set := {id}; 
+	level(j) := 0 para todos os vizinhos de i; 
+	state := 0; 
+	initiate := false;
+
+Ação se n ∈ N(0): 
+	initiate := true; 
+	envie set para todos os vizinhos;
+
+Input: set(j); 
+	Se initiate = false
+		initiate := true;
+		envie set para todos os vizinhos; 
+	se state < n-1
+		level(j) := state + 1; 
+		para cada id(k) em set
+			se dist(k) > level(j) 
+				dist(k) := level(j); 
+				first(k) := n(j);
+	se state < level(j) para todo j vizinho 
+		state := state + 1; 
+		set := {id(k) | dist(k) = state}; 
+		envie set para todos os vizinhos;

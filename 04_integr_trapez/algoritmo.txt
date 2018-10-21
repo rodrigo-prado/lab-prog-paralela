@@ -1,0 +1,32 @@
+Variáveis: 
+	h         := (b - a) / nrTrapezios;
+	local_n   := nrTrapezios / nrProcessos;
+	local_a   := a + (my_rank * local_n * h);
+	local_b   := local_a + (local_n * h);
+	alcançado := falso
+	
+Ação inicial para todos os nós: 
+	x := local_a;
+	integral := (f(local_a) + f(local_b)) / 2.0 {pontos inicial e final}
+	para i variando de 1 até local_n - 1 faça   {demais pontos}
+		x := x + h;
+		integral := integral + f(x);
+	integral := integral * h;
+	se my_rank = 0
+		total := integral;
+		para i variando de 1 até nrProcessos - 1
+			receba valor na variável integral;
+			total = total + integral;
+		imprima "Valor calculado: " + total;
+	senão
+		envie integral para nó 0;
+		
+	
+Ao receber inf:
+	count := count + 1; 
+	se alcançado = falso
+		alcançado := verdadeiro; 
+		pai := origem(inf);
+		envie inf a todos os vizinhos exceto pai;
+	se count = |vizinhos| e pai != nil
+		envie inf para pai;
