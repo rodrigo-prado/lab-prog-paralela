@@ -985,7 +985,7 @@ int Sigraph::viz_down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B,
   if (num_candA == 0)
     return 0;
 
-  std::cout << std::endl << "\x1b[1;37m" << "num_candA = " << num_candA << "\x1b[0m" << std::endl;
+  // std::cout << std::endl << "\x1b[1;37m" << "num_candA = " << num_candA << "\x1b[0m" << std::endl;
   /* 1 NIVEL) A -> C */
   for (vert_AC = -1, parada_1 = num_candA, i_AC = (int) (rand() % num_candA);
       parada_1 > 0; i_AC++) {
@@ -1046,7 +1046,7 @@ int Sigraph::viz_down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B,
   if (num_candB == 0)
     return 0;
 
-  std::cout << std::endl << "\x1b[1;37m" << "num_candB = " << num_candB << "\x1b[0m" << std::endl;
+  // std::cout << std::endl << "\x1b[1;37m" << "num_candB = " << num_candB << "\x1b[0m" << std::endl;
 
   /* 1 NIVEL) B -> C */
   for (vert_BC = -1, parada_1=num_candB, i_BC = (int) (rand() % num_candB);
@@ -1604,9 +1604,14 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
       << calcula_tempo(t_ini_g, (unsigned long int) clock())
       << " seg"<<std::endl;
 
-    std::cout << "\x1b[1;31m" << std::endl << rank << ":TEMPO = "
+    /*std::cout << "\x1b[1;31m" << std::endl << rank << ":TEMPO = "
         << calcula_tempo(t_ini_g, (unsigned long int) clock())
-        << " seg" << "\x1b[0m" << std::endl;
+        << " seg" << "\x1b[0m" << std::endl;*/
+
+
+    std::cout << "\x1b[1;31m" << rank << ":TEMPO = "
+        << calcula_tempo(t_ini_g, (unsigned long int) clock())
+        << " seg, melhor solucao " << b_sol << ", solucao atual " << sol << "\x1b[0m" << std::endl;
 
     if (calcula_tempo(t_ini_g, (unsigned long int) clock()) > TIMEMAX)
       break;
