@@ -638,7 +638,7 @@ void Sigraph::testa_particoes_grasp_sig_v2(Array<int> &A, Array<int> &a, Array<i
 {
   int  ii, jj;
   bool achou;
-
+// std::cout << "TESTANDO " << std::endl;
   // testa A,B
   for (ii = 0; ii < n; ii++)
     for (jj = ii + 1; jj < n; jj++)
