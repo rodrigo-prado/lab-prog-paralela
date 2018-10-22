@@ -2,7 +2,7 @@
 echo "Proccess execution"
 
 # Building the launching command
-command="mpirun -np 1 dmer 1-t0.300-to0.05-y2003-m11-p90-signed.g.g"
+command="mpirun -mca btl ^openib -np 1 dmer 1-t0.300-to0.05-y2003-m11-p90-signed.g.g"
 
 $command
 TWE=$?
