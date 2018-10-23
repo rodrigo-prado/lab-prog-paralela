@@ -459,7 +459,7 @@ void *processa_viz_2down_AB_v2(void *arg) {
       data->c[num_candC+1] = -1;
 
       /* 1 NIVEL) 2B -> C */
-      for (vert_BC1 = -1, parada_2=num_candB, i_BC1=(int)(rand() % num_candB);
+      for (vert_BC1 = -1, parada_2 = num_candB, i_BC1 = (int) (rand() % num_candB);
           parada_2 > 0; i_BC1++) {
         if (data->b[i_BC1] != -2) {
           vert_BC1 = data->b[i_BC1];
@@ -2055,7 +2055,7 @@ int Sigraph::viz_2down_AB_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     return 0;
 
   g_i_AC1 = (int) (rand() % num_candA);
-  parada_1 = g_i_BC1;
+  parada_1 = g_i_AC1;
 
   pthread_t thr[concurentThreadsSupported];
 
