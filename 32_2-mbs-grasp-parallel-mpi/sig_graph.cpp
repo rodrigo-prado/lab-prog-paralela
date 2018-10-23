@@ -1758,7 +1758,6 @@ int Sigraph::viz_2down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B,
 
   int i, rc;
   /* create a thread_data_t argument array */
-  // concurentThreadsSupported = 2;
   thread_data_t thr_data[concurentThreadsSupported];
 
   /* create threads */
@@ -1910,7 +1909,6 @@ int Sigraph::viz_2down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B,
 
   int i, rc;
   /* create a thread_data_t argument array */
-  // concurentThreadsSupported = 2;
   thread_data_t thr_data[concurentThreadsSupported];
 
   /* create threads */
@@ -2065,7 +2063,6 @@ int Sigraph::viz_2down_AB_v2(Array<int> &A, Array<int> &a, Array<int> &B,
 
   int i, rc;
   /* create a thread_data_t argument array */
-  // concurentThreadsSupported = 2;
   thread_data_t thr_data[concurentThreadsSupported];
 
   /* create threads */
@@ -2309,9 +2306,16 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
         vez = (int) (rand() % 3);
 
         while ((!viz_A) || (!viz_B) || (!viz_AB)) {
+          //std::cout << "2a vizinhanca!!!" << std::endl;
+          // vez = 2;
+          // viz_A = true;
+          // viz_B = true;
+          // viz_AB = true;
+
+
           if ((vez == 0) && (!viz_A)) {
             if (viz_2down_A_v2(A, a, B, b, C, c, cand1, cand2, TEST, t_ini_g, TIMEMAX) == 1) {
-              if (DEPU) std::cout<<"MOVEU -> viz_2down_A_v2"<<std::endl;
+              if (DEPU) std::cout << "MOVEU -> viz_2down_A_v2" << std::endl;
               moveu = true;
               break;
             }
