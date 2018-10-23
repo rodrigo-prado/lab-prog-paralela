@@ -209,7 +209,7 @@ void *processa_viz_down_B_v2(void *arg) {
       }
     }
 
-    //if (i_AC == (num_candA - 1)) i_AC = -1;
+    //if (i_BC == (num_candB - 1)) i_AC = -1;
 
     //parada_1--;
     i_BC = obtem_i_BC();
@@ -1530,7 +1530,8 @@ int Sigraph::viz_down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     return 0;
 
   g_i_AC = (int) (rand() % num_candA);
-  parada_1 = g_i_AC;
+  if (g_i_AC == 0) parada_1 = num_candA - 1;
+  else parada_1 = g_i_AC - 1;
 
   pthread_t thr[concurentThreadsSupported];
 
@@ -1639,7 +1640,8 @@ int Sigraph::viz_down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     return 0;
 
   g_i_BC = (int) (rand() % num_candB);
-  parada_1 = g_i_BC;
+  if (g_i_BC == 0) parada_1 = num_candB - 1;
+  else parada_1 = g_i_BC - 1;
 
   pthread_t thr[concurentThreadsSupported];
 
@@ -1750,7 +1752,8 @@ int Sigraph::viz_2down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     return 0;
 
   g_i_AC1 = (int) (rand() % num_candA);
-  parada_1 = g_i_AC1;
+  if (g_i_AC1 == 0) parada_1 = num_candA - 1;
+  else parada_1 = g_i_AC1 - 1;
 
   pthread_t thr[concurentThreadsSupported];
 
@@ -1901,7 +1904,8 @@ int Sigraph::viz_2down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     return 0;
 
   g_i_BC1 = (int) (rand() % num_candB);
-  parada_1 = g_i_BC1;
+  if (g_i_BC1 == 0) parada_1 = num_candB - 1;
+  else parada_1 = g_i_BC1 - 1;
 
   pthread_t thr[concurentThreadsSupported];
 
@@ -2055,7 +2059,8 @@ int Sigraph::viz_2down_AB_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     return 0;
 
   g_i_AC1 = (int) (rand() % num_candA);
-  parada_1 = g_i_AC1;
+  if (g_i_AC1 == 0) parada_1 = num_candA - 1;
+  else parada_1 = g_i_AC1 - 1;
 
   pthread_t thr[concurentThreadsSupported];
 
