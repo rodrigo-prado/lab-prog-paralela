@@ -86,7 +86,7 @@ int obtem_i_BC1() {
   sem_wait(&access_mutex);
   result = g_i_BC1;
   if (result != parada_1) {
-    if (g_i_BC1 == (num_candA - 1)) g_i_BC1 = 0;
+    if (g_i_BC1 == (num_candB - 1)) g_i_BC1 = 0;
     else g_i_BC1 += 1;
   }
   sem_post(&access_mutex);
@@ -431,7 +431,7 @@ void *processa_viz_2down_B_v2(void *arg) {
 
 void *processa_viz_2down_AB_v2(void *arg) {
   int vert_AC1, vert_BC1, i_AC1, i_BC1, parada_2;
-  // int vert_AC1, vert_AC2, i_AC1, i_AC2, parada_2;
+  // int vert_AC1, vert_BC1, i_AC1, i_BC1, parada_1, parada_2, num_candA, num_candB, num_candC;
   int DEPU = 0;
   bool moveu = false;
 
