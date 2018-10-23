@@ -1536,7 +1536,7 @@ int Sigraph::viz_down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B,
 
   int i, rc;
   /* create a thread_data_t argument array */
-  // concurentThreadsSupported = 2;
+  //concurentThreadsSupported = 3;
   thread_data_t thr_data[concurentThreadsSupported];
 
   /* create threads */
