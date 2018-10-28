@@ -12,7 +12,6 @@ Dmer::Dmer(const char * name, int MaxIter, int MaxTime) {
 
   strcpy(nome, name);
   le_dados_grasp(MaxIter, MaxTime);   /* carrega a estrutura custo a partir do arquivo de entrada e executa grasp */
-
 }
 
 //---------------------------------------------------------------------------
@@ -31,51 +30,49 @@ double Dmer::calcula_tempo(const unsigned long int ini,
 
 //---------------------------------------------------------------------------
 
-void Dmer::le_dados_grasp(int MaxIter, int MaxTime)
-{
-  int           jj;
-  char          arq[256];
+void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
+  int jj;
+  char arq[256];
   std::ifstream fin;
-  Array<int>    f;
-  Array<int>    f2;
-  Array<int>    f3;
-  Array<int>    f4;
-  Array<int>    f5;
-  Array<int>    f6;
-  Array<int>    atc;
+  Array<int> f;
+  Array<int> f2;
+  Array<int> f3;
+  Array<int> f4;
+  Array<int> f5;
+  Array<int> f6;
+  Array<int> atc;
 
   //int    DEPU         = 1;
-  int    TEST         = 0;
+  int TEST = 0;
 
   // unsigned long int   t_ini2;
 
   timeval start, end;
 
-  strcpy(arq,nome);
+  strcpy(arq, nome);
   fin.open(arq);
 
   /* constroi grafo de sinais */
   sg.ini(fin);
 
   /* aloca */
-  f.aloca(sg.n+5);
-  f2.aloca(sg.n+5);
-  f3.aloca(sg.n+5);
-  f4.aloca(sg.n+5);
-  f5.aloca(sg.n+5);
-  f6.aloca(sg.n+5);
+  f.aloca(sg.n + 5);
+  f2.aloca(sg.n + 5);
+  f3.aloca(sg.n + 5);
+  f4.aloca(sg.n + 5);
+  f5.aloca(sg.n + 5);
+  f6.aloca(sg.n + 5);
 
   /* Grasp */
   gettimeofday(&start, NULL); //marcador de início do processamento
 //   t_ini2  = (unsigned long int) clock();
-  jj = sg.grasp_sig_v2(sg.vet1, f, sg.vet2, f2, sg.vet3, f3, sg.vet4, f4, f5, f6,
-      MaxIter, MaxTime, TEST);
+  jj = sg.grasp_sig_v2(sg.vet1, f, sg.vet2, f2, sg.vet3, f3, sg.vet4, f4, f5, f6, MaxIter, MaxTime,
+    TEST);
 /*  std::cout << std::endl << nome << " GRASP = " << jj << " Tempo = "
       << calcula_tempo(t_ini2, (unsigned long int) clock()) << std::endl; */
   gettimeofday(&end, NULL);
   double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6;
-  std::cout << std::endl << nome << " GRASP = " << jj << " Tempo = "
-      << delta << std::endl;
+  std::cout << std::endl << nome << " GRASP = " << jj << " Tempo = " << delta << std::endl;
 
   /* desaloca */
   r.desaloca();

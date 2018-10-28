@@ -26,17 +26,16 @@ extern int naloc;
 
 //---------------------------------------------------------------------------
 
-class Sigraph
-{
+class Sigraph {
 public:
   Sigraph() {}
   ~Sigraph() {g.desaloca(); Gp.desaloca(); Gn.desaloca(); map.desaloca(); stat.desaloca(); comp.desaloca();  vet1.desaloca(); vet2.desaloca(); vet3.desaloca(); vet4.desaloca();}
 
-  Matriz<str_e> g;    // grafo booleano de arestas positivas e negativas
-  Matriz<int>   Gp;   // grafo positivo representado por listas (vetores) de arestas. (informacao duplicada)
-  Matriz<int>   Gn;   // grafo negativo representado por listas (vetores) de arestas. (informacao duplicada)
-  Array<int>    map;  // mapa de indices de g -> A
-  Array<int>    stat; // status do vertice. -1 -> nao ativo
+  Matriz<str_e> g; // grafo booleano de arestas positivas e negativas
+  Matriz<int> Gp; // grafo positivo representado por listas (vetores) de arestas. (informacao duplicada)
+  Matriz<int> Gn; // grafo negativo representado por listas (vetores) de arestas. (informacao duplicada)
+  Array<int> map; // mapa de indices de g -> A
+  Array<int> stat; // status do vertice. -1 -> nao ativo
                       //                    1  -> ativo
                       //                    2  -> vertice isolado
                       //                    3  -> vertice negativamente isolado
@@ -46,19 +45,19 @@ public:
   Array<int>    comp; // componente do vertice
 
   // Vetores de uso generico
-  Array<int> vet1;   // preproc_Separator_1, solve_dumb_comp, solve_dumb_rec, grasp_stable_set
-  Array<int> vet2;   // preproc_Separator_1, solve_dumb_comp, solve_dumb_rec, grasp_stable_set
-  Array<int> vet3;   // grasp_stable_set
-  Array<int> vet4;   // grasp_stable_set
+  Array<int> vet1; // preproc_Separator_1, solve_dumb_comp, solve_dumb_rec, grasp_stable_set
+  Array<int> vet2; // preproc_Separator_1, solve_dumb_comp, solve_dumb_rec, grasp_stable_set
+  Array<int> vet3; // grasp_stable_set
+  Array<int> vet4; // grasp_stable_set
 
-  int           n;             // numero de vertices
-  int           n_c;           // numero de componentes
+  int n; // numero de vertices
+  int n_c; // numero de componentes
 
-  int           n_iso;         // numero de vertices isolados retirados
-  int           n_niso;        // numero de vertices negativamente isolados retirados
-  int           n_vizig;       // numero de vertices retirados que a vizinhanca eh igual a outro vertice
-  int           n_pontes;      // numero de pontes retiradas
-  int           n_add_preproc; // numero adicionado a solucao por causa dos vertices retirados no preproc do Separator
+  int n_iso; // numero de vertices isolados retirados
+  int n_niso; // numero de vertices negativamente isolados retirados
+  int n_vizig; // numero de vertices retirados que a vizinhanca eh igual a outro vertice
+  int n_pontes; // numero de pontes retiradas
+  int n_add_preproc; // numero adicionado a solucao por causa dos vertices retirados no preproc do Separator
 
   float ini(std::ifstream &fin);
   void  fini();

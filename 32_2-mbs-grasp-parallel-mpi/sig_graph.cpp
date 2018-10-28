@@ -2338,7 +2338,6 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
           // viz_B = true;
           // viz_AB = true;
 
-
           if ((vez == 0) && (!viz_A)) {
             if (viz_2down_A_v2(A, a, B, b, C, c, cand1, cand2, TEST, t_ini_g, TIMEMAX) == 1) {
               if (DEPU) std::cout << "MOVEU -> viz_2down_A_v2" << std::endl;
