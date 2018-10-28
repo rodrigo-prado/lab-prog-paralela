@@ -1469,11 +1469,11 @@ int Sigraph::obj_grasp_sig_v2(Array<int> &A, Array<int> &B)
 }
 
 /* calculo do tempo */
-double Sigraph::calcula_tempo(const unsigned long int ini, const unsigned long int fim)
-{
+double Sigraph::calcula_tempo(const unsigned long int ini,
+    const unsigned long int fim) {
   double r;
-
-  if(fim >= ini)
+  // std::cout << "CLOCKS_PER_SEC = " << CLOCKS_PER_SEC << std::endl;
+  if (fim >= ini)
     r = ((double)(fim - ini)) / CLOCKS_PER_SEC;
   else
     r = ((double)( (fim + (unsigned long int)-1) - ini)) / CLOCKS_PER_SEC;

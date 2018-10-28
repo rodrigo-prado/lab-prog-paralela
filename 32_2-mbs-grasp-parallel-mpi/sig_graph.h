@@ -73,13 +73,14 @@ public:
   int  can_2move_C_AB_v2(int l1, int l2, int num_candA, int num_candB, Array<int> &a, Array<int> &b, Array<int> &C, Array<int> &c, int TEST);
   bool move_2_C_AB_v2(int desceu, int origem, Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C , Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST);
   bool move_3_C_AB_v2(int desceu1, int desceu2, int origem1, int origem2, Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST);
-  int  viz_down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST, unsigned long int t_ini_g);
-  int  viz_down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST, unsigned long int t_ini_g);
-  int  viz_2down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST, unsigned long int t_ini_g, int TIMEMAX);
-  int  viz_2down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST, unsigned long int t_ini_g, int TIMEMAX);
-  int  viz_2down_AB_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST, unsigned long int t_ini_g, int TIMEMAX);
+  int  viz_down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST, timeval t_ini_g);
+  int  viz_down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST, timeval t_ini_g);
+  int  viz_2down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST, timeval t_ini_g, int TIMEMAX);
+  int  viz_2down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST, timeval t_ini_g, int TIMEMAX);
+  int  viz_2down_AB_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST, timeval t_ini_g, int TIMEMAX);
   int  obj_grasp_sig_v2(Array<int> &A, Array<int> &B);
-  double calcula_tempo(const unsigned long int ini, const unsigned long int fim);
+  // double calcula_tempo(const unsigned long int ini, const unsigned long int fim);
+  double calcula_tempo(const struct timeval start, const struct timeval end);
   int  grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, Array<int> &b_A, Array<int> &b_B, int ITMAX, int TIMEMAX, int TEST);
 
   /* ------- TAD ------ */

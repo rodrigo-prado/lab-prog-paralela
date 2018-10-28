@@ -6,6 +6,8 @@
 #include <thread>
 #include <semaphore.h>
 
+#include <sys/time.h>
+
 #include "sig_graph.h"
 
 /* create thread argument struct for thr_func() */
@@ -20,7 +22,7 @@ typedef struct _thread_data_t {
   Array<int> cand1;
   Array<int> cand2;
   int TEST;
-  unsigned long int t_ini_g;
+  timeval t_ini_g;
   Sigraph *obj;
 } thread_data_t;
 
@@ -220,6 +222,7 @@ void *processa_viz_down_B_v2(void *arg) {
 
 
 void *processa_viz_2down_A_v2(void *arg) {
+  timeval end;
   int vert_AC1, vert_AC2, i_AC1, i_AC2, parada_2;
   int DEPU = 0;
   bool moveu = false;
@@ -280,8 +283,8 @@ void *processa_viz_2down_A_v2(void *arg) {
             data->a[i_AC2] = vert_AC2;
             data->c[num_candC+1] = -1;
           }
-
-          if (data->obj->calcula_tempo(data->t_ini_g, (unsigned long int) clock()) > g_TIMEMAX) {
+          gettimeofday(&end, NULL);
+          if (data->obj->calcula_tempo(data->t_ini_g, end) > g_TIMEMAX) {
             /* <--- */
             data->C[vert_AC1] = 0;
             data->A[vert_AC1] = 1;
@@ -323,6 +326,7 @@ void *processa_viz_2down_A_v2(void *arg) {
 
 
 void *processa_viz_2down_B_v2(void *arg) {
+  timeval end;
   int vert_BC1, vert_BC2, i_BC1, i_BC2, parada_2;
   int DEPU = 0;
   bool moveu = false;
@@ -388,7 +392,8 @@ void *processa_viz_2down_B_v2(void *arg) {
             data->c[num_candC+1] = -1;
           }
 
-          if (data->obj->calcula_tempo(data->t_ini_g, (unsigned long int) clock()) > g_TIMEMAX) {
+          gettimeofday(&end, NULL);
+          if (data->obj->calcula_tempo(data->t_ini_g, end) > g_TIMEMAX) {
             /* <--- */
             data->C[vert_BC1] = 0;
             data->B[vert_BC1] = 1;
@@ -430,6 +435,7 @@ void *processa_viz_2down_B_v2(void *arg) {
 
 
 void *processa_viz_2down_AB_v2(void *arg) {
+  timeval end;
   int vert_AC1, vert_BC1, i_AC1, i_BC1, parada_2;
   // int vert_AC1, vert_BC1, i_AC1, i_BC1, parada_1, parada_2, num_candA, num_candB, num_candC;
   int DEPU = 0;
@@ -492,7 +498,8 @@ void *processa_viz_2down_AB_v2(void *arg) {
             data->c[num_candC+1] = -1;
           }
 
-          if (data->obj->calcula_tempo(data->t_ini_g, (unsigned long int) clock()) > g_TIMEMAX) {
+          gettimeofday(&end, NULL);
+          if (data->obj->calcula_tempo(data->t_ini_g, end) > g_TIMEMAX) {
             /* <--- */
             data->C[vert_AC1] = 0;
             data->A[vert_AC1] = 1;
@@ -1509,7 +1516,7 @@ bool Sigraph::move_3_C_AB_v2(int desceu1, int desceu2, int origem1, int origem2,
 /* vizinhanca do GRASP para o problema do grafo de sinais -> desce um de A e sobem 2 para A ou B */
 int Sigraph::viz_down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1,
-    Array<int> &cand2, int TEST, unsigned long int t_ini_g) {
+    Array<int> &cand2, int TEST, timeval t_ini_g) {
   // int num_candA, num_candC, vert_AC, i_AC, parada_1;
   // bool moveu = false;
   g_moveu = false;
@@ -1622,7 +1629,7 @@ int Sigraph::viz_down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B,
 /* vizinhanca do GRASP para o problema do grafo de sinais -> desce um de B e sobem 2 para A ou B */
 int Sigraph::viz_down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1,
-    Array<int> &cand2, int TEST, unsigned long int t_ini_g) {
+    Array<int> &cand2, int TEST, timeval t_ini_g) {
   // int num_candB, num_candC, vert_BC, i_BC, parada_1;
   // bool moveu = false;
 
@@ -1734,7 +1741,7 @@ int Sigraph::viz_down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B,
 /* vizinhanca do GRASP para o problema do grafo de sinais -> desce 2 de A e sobem 3 para A ou B */
 int Sigraph::viz_2down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1,
-    Array<int> &cand2, int TEST, unsigned long int t_ini_g, int TIMEMAX) {
+    Array<int> &cand2, int TEST, timeval t_ini_g, int TIMEMAX) {
   // int vert_AC1, vert_AC2, i_AC1, i_AC2, parada_1, parada_2, num_candA, num_candC;
   // bool moveu = false;
 
@@ -1884,7 +1891,7 @@ int Sigraph::viz_2down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B,
 /* vizinhanca do GRASP para o problema do grafo de sinais -> desce 2 de B e sobem 3 para A ou B */
 int Sigraph::viz_2down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1,
-    Array<int> &cand2, int TEST, unsigned long int t_ini_g, int TIMEMAX) {
+    Array<int> &cand2, int TEST, timeval t_ini_g, int TIMEMAX) {
   // int vert_BC1, vert_BC2, i_BC1, i_BC2, parada_1, parada_2, num_candB, num_candC;
   // bool moveu=false;
 
@@ -2039,7 +2046,7 @@ int Sigraph::viz_2down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B,
 /* vizinhanca do GRASP para o problema do grafo de sinais -> desce 2 de AB (1 de A e um de B )e sobem 3 para A ou B */
 int Sigraph::viz_2down_AB_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1,
-    Array<int> &cand2, int TEST, unsigned long int t_ini_g, int TIMEMAX) {
+    Array<int> &cand2, int TEST, timeval t_ini_g, int TIMEMAX) {
   // int vert_AC1, vert_BC1, i_AC1, i_BC1, parada_1, parada_2, num_candA, num_candB, num_candC;
   // bool moveu = false;
 
@@ -2208,16 +2215,26 @@ int Sigraph::obj_grasp_sig_v2(Array<int> &A, Array<int> &B) {
 
 
 /* calculo do tempo */
-double Sigraph::calcula_tempo(const unsigned long int ini, const unsigned long int fim)
-{
-  double r;
-
-  if(fim >= ini)
-    r = ((double)(fim - ini)) / CLOCKS_PER_SEC;
-  else
-    r = ((double)( (fim + (unsigned long int)-1) - ini)) / CLOCKS_PER_SEC;
-  return r;
+double Sigraph::calcula_tempo(const timeval start, const timeval end) {
+  return (((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6);
 }
+
+
+
+/* calculo do tempo
+double Sigraph::calcula_tempo(const unsigned long int ini,
+    const unsigned long int fim) {
+  double r;
+  // std::cout << "CLOCKS_PER_SEC = " << CLOCKS_PER_SEC << std::endl;
+  if (fim >= ini)
+    r = ((double)(fim - ini)) / CLOCKS_PER_SEC;
+  else {
+    std::cout << "Não faz sentido!" << std::endl;
+
+    r = ((double)( (fim + (unsigned long int)-1) - ini)) / CLOCKS_PER_SEC;
+  }
+  return r;
+} */
 
 
 
@@ -2232,7 +2249,6 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     Array<int> &b, Array<int> &C, Array<int> &c, Array<int> &cand1,
     Array<int> &cand2, Array<int> &b_A, Array<int> &b_B, int ITMAX,
     int TIMEMAX, int TEST) {
-
   g_TIMEMAX = TIMEMAX;
 
   concurentThreadsSupported = (int) std::thread::hardware_concurrency();
@@ -2246,12 +2262,16 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
 
   int it, sol, b_sol = -1, vez, ii;
   bool moveu, viz_A, viz_B, viz_AB;
-  unsigned long int t_ini_g;
+  // unsigned long int t_ini_g;
+
+  timeval t_ini_g, end;
 
   /* PARAMETROS */
   int DEPU = 0;
 
-  t_ini_g  = (unsigned long int) clock();
+  // t_ini_g  = (unsigned long int) clock();
+
+  gettimeofday(&t_ini_g, NULL); //marcador de início do processamento
 
   for (it = 0; it < ITMAX; it++) {
     sol = metodo_construtivo_grasp_sig_v2(A, a, B, b, C, c, cand1, cand2, TEST);
@@ -2278,7 +2298,8 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
         }
 
         /* teste de parada por tempo */
-        if (calcula_tempo(t_ini_g, (unsigned long int) clock()) > TIMEMAX)
+        gettimeofday(&end, NULL);
+        if (calcula_tempo(t_ini_g, end) > TIMEMAX)
           break;
 
         if ((vez == 0)&& (!viz_B)) {
@@ -2293,12 +2314,14 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
         }
 
         /* teste de parada por tempo */
-        if (calcula_tempo(t_ini_g, (unsigned long int) clock()) > TIMEMAX)
+        gettimeofday(&end, NULL);
+        if (calcula_tempo(t_ini_g, end) > TIMEMAX)
           break;
       }
 
       /* teste de parada por tempo */
-      if (calcula_tempo(t_ini_g, (unsigned long int) clock()) > TIMEMAX)
+      gettimeofday(&end, NULL);
+      if (calcula_tempo(t_ini_g, end) > TIMEMAX)
         break;
 
       // ---------> 2-swap
@@ -2328,7 +2351,8 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
           }
 
           /* teste de parada por tempo */
-          if (calcula_tempo(t_ini_g, (unsigned long int) clock()) > TIMEMAX)
+          gettimeofday(&end, NULL);
+          if (calcula_tempo(t_ini_g, end) > TIMEMAX)
             break;
 
           if ((vez == 1) && (!viz_B)) {
@@ -2344,7 +2368,8 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
           }
 
           /* teste de parada por tempo */
-          if (calcula_tempo(t_ini_g, (unsigned long int) clock()) > TIMEMAX)
+          gettimeofday(&end, NULL);
+          if (calcula_tempo(t_ini_g, end) > TIMEMAX)
             break;
 
           if ((vez == 2) && (!viz_AB)) {
@@ -2359,7 +2384,8 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
           }
 
           /* teste de parada por tempo */
-          if (calcula_tempo(t_ini_g, (unsigned long int) clock()) > TIMEMAX)
+          gettimeofday(&end, NULL);
+          if (calcula_tempo(t_ini_g, end) > TIMEMAX)
             break;
 
         }/* while ((!viz_A) || (!viz_B) || (!viz_AB))*/
@@ -2371,8 +2397,12 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
       }
 
       /* teste de parada por tempo */
-      if (DEPU) std::cout<<std::endl<<"TEMPO = "<<calcula_tempo(t_ini_g, (unsigned long int) clock())<<" seg"<<std::endl;
-      if (calcula_tempo(t_ini_g, (unsigned long int) clock()) > TIMEMAX)
+      gettimeofday(&end, NULL);
+      if (DEPU) std::cout << std::endl << "TEMPO = "
+          << calcula_tempo(t_ini_g, end) << " seg"
+          << std::endl;
+      gettimeofday(&end, NULL);
+      if (calcula_tempo(t_ini_g, end) > TIMEMAX)
         break;
     }
 
@@ -2392,15 +2422,19 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     }
 
     /* teste de parada por tempo */
+    gettimeofday(&end, NULL);
     if (DEPU) std::cout << std::endl << "TEMPO = "
-      << calcula_tempo(t_ini_g, (unsigned long int) clock())
+      << calcula_tempo(t_ini_g, end)
       << " seg"<<std::endl;
 
-    std::cout << "\x1b[1;31m" << rank << ":TEMPO = "
-        << calcula_tempo(t_ini_g, (unsigned long int) clock())
-        << " seg, melhor solucao " << b_sol << ", solucao atual " << sol << "\x1b[0m" << std::endl;
+    gettimeofday(&end, NULL);
+    std::cout << "\x1b[1;31m" << rank << ":" << it << ":TEMPO = "
+        << calcula_tempo(t_ini_g, end)
+        << " seg, melhor solucao " << b_sol << ", solucao atual " << sol
+        << "\x1b[0m" << std::endl;
 
-    if (calcula_tempo(t_ini_g, (unsigned long int) clock()) > TIMEMAX)
+    gettimeofday(&end, NULL);
+    if (calcula_tempo(t_ini_g, end) > TIMEMAX)
       break;
 
   } /* for (it=0; it<ITMAX; it++) */
