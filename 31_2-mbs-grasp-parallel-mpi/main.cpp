@@ -6,6 +6,8 @@
 #include <cstring>
 #include <mpi.h>
 #include <math.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 //---------------------------------------------------------------------------
 
@@ -19,17 +21,14 @@ int nfree = 0;
 
 //---------------------------------------------------------------------------
 
-void mserro(const char *clas, const char *func, const char * ms, const int nerr);
+void mserro(const char *clas, const char *func, const char *ms, const int nerr);
 
 //---------------------------------------------------------------------------
+int size, rank, LIMITE;
 
-MPI_Status status;
-MPI_Request request;
-
-int main(int argc, char * argv[])
-{
+int main(int argc, char *argv[]) {
   /* Declaração das variáveis */
-  int size, rank;
+  // int size, rank;
   // struct timeval start, end;
   // int col_sum = N * (N - 1) / 2;
 
@@ -41,7 +40,8 @@ int main(int argc, char * argv[])
   int MaxIter = 100;
   int MaxTime = 300; //segundos
 
-  long int seed = exp(rank * 1024);
+  //long int seed = exp(rank * 1024);
+  long int seed = time(NULL) * rank * getpid();
   /* inicializa pseudo-aleatoricidade*/
   // srand(time(0));
   srand(seed);
@@ -84,6 +84,7 @@ int main(int argc, char * argv[])
   } else {
     MaxIter = MaxIter / size;
   }
+  LIMITE = MaxIter;
   //printf("Sending %d rows to task %d\n", rows, i);
   std::cout << "\x1b[1;34m" << rank << ":Beginning with " << MaxIter
     << " iterations " << "for the period max of " << MaxTime << " seconds."
@@ -96,7 +97,7 @@ int main(int argc, char * argv[])
 
 //---------------------------------------------------------------------------
 
-void mserro(const char *clas, const char *func, const char * ms, const int nerr) {
+void mserro(const char *clas, const char *func, const char *ms, const int nerr) {
   std::cout << std::endl << "Erro na classe " << clas << " funcao " << func
     << " - " << ms << std::endl;
   exit(nerr);

@@ -2,7 +2,11 @@
 echo "Proccess execution"
 
 # Building the launching command
-command="mpirun -np 4 dmer 1-t0.300-to0.05-y2003-m11-p90-signed.g.g"
+#command="mpirun -np 4 dmer 1-t0.300-to0.05-y2003-m11-p90-signed.g.g"
+#command="mpirun -np 4 dmer "
+command="mpirun -np 4 dmer bienst1.mps.g.g 20 300"
+#command="mpirun -np 4 dmer 1-t0.300-to0.05-y2003-m11-p90-signed.g.g"
+
 
 $command
 TWE=$?

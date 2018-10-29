@@ -6,7 +6,7 @@
 //---------------------------------------------------------------------------
 
 #include <new>
-#include <iostream> 
+#include <iostream>
 
 //---------------------------------------------------------------------------
 
@@ -19,25 +19,28 @@ extern int nfree;
 
 //---------------------------------------------------------------------------
 
-extern void mserro(const char *clas,const char *func,const char * ms,const int nerr);
+extern void mserro(const char *clas, const char *func, const char * ms, const int nerr);
 
 //---------------------------------------------------------------------------
 template <class T>
-class Matriz
-{
+class Matriz {
 public:
-  Matriz():pType(NULL),n(0),m(0){}
+  Matriz(): pType(NULL), n(0), m(0) {}
+  Matriz(const Matriz &rhs);
   Matriz(const int nin, const int min, const T val = 0);
   ~Matriz();
   T& operator()(const int i, const int j);
   const T& operator()(const int i, const int j) const;
+  Matriz& operator= (const Matriz&);
   void redefine(const int novo_n, const int novo_m, const T val = 0); // aloca a matriz e os elementos ficam igual a val
   void aloca(const int novo_n, const int novo_m);  // aloca a matriz
   void set(const T val = 0);  // toda a matriz fica igual a val
   void set(const int i, const T val);
   void get_size(int &nout, int &mout) {nout = n; mout = m;}
-  void desaloca() {del(); n=m = 0; pType = NULL;}
+  void desaloca() {del(); n = m = 0; pType = NULL;}
   void imprime();
+  int getNumLinhas() const{return n;};
+  int getNumColunas() const{return m;};
 private:
   void del();
   T **pType;
@@ -45,11 +48,21 @@ private:
   int m; // nomero de colunas
 };
 
+template <class T>
+Matriz<T>::Matriz(const Matriz &rhs) {
+  pType = NULL;
+  aloca(rhs.getNumLinhas(), rhs.getNumColunas());
+  for(int i = 0; i < n; i++) {
+    for(int j = 0; j < m; j++) {
+      pType[i][j] = rhs(i, j);
+    }
+  }
+}
+
 //---------------------------------------------------------------------------
 
 template <class T>
-Matriz<T>::Matriz(const int nin, const int min, const T val)
-{
+Matriz<T>::Matriz(const int nin, const int min, const T val) {
   pType = NULL; n = m = 0;
   redefine(nin, min, val);
 }
@@ -57,8 +70,7 @@ Matriz<T>::Matriz(const int nin, const int min, const T val)
 //---------------------------------------------------------------------------
 
 template<class T>
-Matriz<T>::~Matriz()
-{
+Matriz<T>::~Matriz() {
   del();
   pType = NULL;
   n = m = 0;
@@ -67,8 +79,7 @@ Matriz<T>::~Matriz()
 //---------------------------------------------------------------------------
 
 template <class T>
-T& Matriz<T>::operator()(const int i, const int j)
-{
+T& Matriz<T>::operator()(const int i, const int j) {
 #ifdef DEBUG_MATRIZ
   if(i >= n || j >= m || i < 0 || j < 0)
     mserro("Matriz", "operator()", "i e/ou j invalidos", 5);
@@ -79,8 +90,7 @@ T& Matriz<T>::operator()(const int i, const int j)
 //---------------------------------------------------------------------------
 
 template <class T>
-const T& Matriz<T>::operator()(const int i, const int j) const
-{
+const T& Matriz<T>::operator()(const int i, const int j) const {
 #ifdef DEBUG_MATRIZ
   if(i >= n || j >= m || i < 0 || j < 0)
     mserro("Matriz", "operator() const", "i e/ou j invalidos", 5);
@@ -88,33 +98,41 @@ const T& Matriz<T>::operator()(const int i, const int j) const
   return pType[i][j];
 }
 
+template <class T>
+Matriz<T>& Matriz<T>::operator=(const Matriz &rhs) {
+  pType = NULL;
+  aloca(rhs.getNumLinhas(), rhs.getNumColunas());
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      pType[i][j] = rhs(i, j);
+    }
+  }
+  return *this;
+}
+
 //---------------------------------------------------------------------------
 
 template <class T>
-void Matriz<T>::aloca(const int novo_n, const int novo_m)
-{  
+void Matriz<T>::aloca(const int novo_n, const int novo_m) {
   del();
-  if(novo_n + novo_m != 0)
-    {
+  if (novo_n + novo_m != 0) {
 #ifdef DEBUG_MATRIZ
-      if(novo_n <= 0 || novo_m <= 0)
-	mserro("Matriz", "aloca", "n e/ou m invalidos", 9);
+    if(novo_n <= 0 || novo_m <= 0)
+      mserro("Matriz", "aloca", "n e/ou m invalidos", 9);
+    ++naloc;
+#endif
+    pType = new T*[novo_n];
+    if (pType == NULL)
+      mserro("Matriz", "aloca", "Falta de memoria 1", 0);
+    for (int i = 0; i < novo_n; i++) {
+      pType[i] = new T[novo_m];
+      if (pType[i] == NULL)
+        mserro("Matriz", "aloca", "Falta de memoria 2", 0);
+#ifdef DEBUG_MATRIZ
       ++naloc;
 #endif
-      pType = new T*[novo_n];
-      if(pType == NULL)
-	mserro("Matriz", "aloca", "Falta de memoria 1", 0);
-      for(int i=0;i<novo_n;i++)
-        {
-          pType[i] = new T[novo_m];
-          if(pType[i] == NULL)
-	    mserro("Matriz", "aloca", "Falta de memoria 2", 0);
-#ifdef DEBUG_MATRIZ
-	  ++naloc;
-#endif
-        }
     }
-  else
+  } else
     pType = NULL;
   n = novo_n;
   m = novo_m;
@@ -123,8 +141,7 @@ void Matriz<T>::aloca(const int novo_n, const int novo_m)
 //---------------------------------------------------------------------------
 
 template <class T>
-void Matriz<T>::redefine(const int novo_n, const int novo_m, const T val)
-{
+void Matriz<T>::redefine(const int novo_n, const int novo_m, const T val) {
   aloca(novo_n, novo_m);
   set(val);
 }
@@ -132,61 +149,51 @@ void Matriz<T>::redefine(const int novo_n, const int novo_m, const T val)
 //---------------------------------------------------------------------------
 
 template <class T>
-void Matriz<T>::set(const T val)
-{
-  for(int i=0;i<n;++i)
-    for(int j=0;j<m;++j)
+void Matriz<T>::set(const T val) {
+  for (int i = 0; i < n; ++i)
+    for (int j = 0; j < m; ++j)
       pType[i][j] = val;
 }
 
 //---------------------------------------------------------------------------
 
 template <class T>
-void Matriz<T>::set(const int i, const T val)
-{
-  for(int j=0;j<m;++j)
+void Matriz<T>::set(const int i, const T val) {
+  for (int j = 0; j < m; ++j)
     pType[i][j] = val;
 }
 
 //---------------------------------------------------------------------------
 
 template <class T>
-void Matriz<T>::del()
-{
-  if(pType != NULL)
-    {
-      for(int i=0;i<n;++i)
-	{
-	  delete [] pType[i];
-#ifdef DEBUG_MATRIZ
-	  ++nfree;
-#endif
-	}
-      delete [] pType;
+void Matriz<T>::del() {
+  if (pType != NULL) {
+    for (int i = 0; i < n; ++i) {
+      delete [] pType[i];
 #ifdef DEBUG_MATRIZ
       ++nfree;
 #endif
     }
+    delete [] pType;
+#ifdef DEBUG_MATRIZ
+    ++nfree;
+#endif
+  }
 }
 
 //---------------------------------------------------------------------------
 
-
 template <class T>
-void Matriz<T>::imprime()
-{
+void Matriz<T>::imprime() {
   std::cout<<"--- MATRIZ ---"<<std::endl;
-  for(int i=0;i<n;++i)
-    {
-      std::cout<<i<<") ";
-      for(int j=0;j<m;++j)
-	{
-	  std::cout<<pType[i][j]<<", ";
-	}
-      std::cout<<std::endl;
+  for (int i = 0; i < n; ++i) {
+    std::cout<<i<<") ";
+    for(int j = 0; j < m; ++j) {
+      std::cout << pType[i][j] << ", ";
     }
+    std::cout << std::endl;
+  }
 }
-
 
 #endif
 

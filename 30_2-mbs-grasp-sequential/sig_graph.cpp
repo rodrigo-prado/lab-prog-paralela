@@ -1528,8 +1528,7 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int
 
 
 // gera um arquivo .sol de solucao a partir do grafo
-void Sigraph::write_sol(const char * name, Array<int> &A, Array<int> &B)
-{
+void Sigraph::write_sol(const char *name, Array<int> &A, Array<int> &B) {
   int i;
   std::ofstream arq_out;
   char name_G[256];
