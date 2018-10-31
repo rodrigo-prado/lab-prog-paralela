@@ -83,15 +83,15 @@ void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
   std::cout << rank << ":" << nome << " GRASP = " << jj << " Tempo = " << delta << std::endl;
   best = jj;
   /* Processo 0 recebe resultados dos outros processos */
-  /*if (rank == 0) {
+  if (rank == 0) {
     for (int i = 1; i < size; i++) {
       std::cout << rank << ":esperando processo " << i << " responder." << std::endl;
-      MPI_Recv(&result, 1, MPI_INT, i, 2, MPI_COMM_WORLD, &status);
+      MPI_Recv(&result, 1, MPI_INT, i, TAG_FINISHED, MPI_COMM_WORLD, &status);
       std::cout << rank << ":resposta [" << result << "] do processo [" << i << "]." << std::endl;
       if (result > best) best = result;
     }
     std::cout << rank << ":melhor solução[" << best << "]." << std::endl;
-  }*/
+  }
 
   /* desaloca */
   r.desaloca();
