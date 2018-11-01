@@ -2,9 +2,9 @@
 echo "Proccess execution"
 
 # Building the launching command
-command="mpirun -mca btl ^openib -np 1 dmer 1-t0.300-to0.05-y2003-m11-p90-signed.g.g"
-#command="mpirun -mca btl ^openib -np 1 dmer danoint.mps.g.g"
-#command="mpirun -mca btl ^openib -np 1 dmer bienst1.mps.g.g"
+#command="mpirun -mca btl ^openib -np 2 dmer 1-t0.300-to0.05-y2003-m11-p90-signed.g.g"
+command="mpirun -mca btl ^openib -np 4 dmer danoint.mps.g.g"
+#command="mpirun -mca btl ^openib -np 2 dmer bienst1.mps.g.g"
 #command="mpirun -mca btl ^openib -np 1 dmer air04.mps.g.g"
 
 $command

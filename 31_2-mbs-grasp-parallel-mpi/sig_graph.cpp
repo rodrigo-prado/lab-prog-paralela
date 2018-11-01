@@ -94,7 +94,6 @@ float Sigraph::ini(std::ifstream &fin) {
   return (cont_neg / cont_pos);
 }
 
-
 //-------------------------------------------------------------------------------
 
 void Sigraph::fini() {
@@ -1345,8 +1344,8 @@ void send_requests() {
 
 
 
-void receive_request(int origin) {
-  int carga = (m_itmax - m_it) / (size - 1);
+/*void receive_request(int origin) {
+  int carga = (m_itmax - m_it) / (size);
   if (carga == 0) {
     if ((m_itmax - m_it) > 1) {
       carga = 1;
@@ -1355,13 +1354,28 @@ void receive_request(int origin) {
   m_itmax -= carga;
   MPI_Send(&carga, 1, MPI_INT, origin, TAG_WORKLOAD, MPI_COMM_WORLD);
   std::cout << rank << ":enviando WORKLOAD [" << carga << "] para o processo [" << origin << "]." << std::endl;
-  // m_send_to_neighbor[origin] = 1;
   m_sended_zero++;
+}*/
+
+
+
+void receive_request(int origin) {
+  int carga = (m_itmax - m_it) / (size);
+  if (carga == 0) {
+    if ((m_itmax - m_it) > 1) {
+      carga = 1;
+    } else {
+      m_sended_zero++;
+    }
+  }
+  m_itmax -= carga;
+  MPI_Send(&carga, 1, MPI_INT, origin, TAG_WORKLOAD, MPI_COMM_WORLD);
+  std::cout << rank << ":enviando WORKLOAD [" << carga << "] para o processo [" << origin << "]." << std::endl;
 }
 
 
 
-bool receive_workload(int msg, int origin) {
+/*bool receive_workload(int msg, int origin) {
   bool has_workload = false;
   if (msg > 0) {
     m_itmax += msg;
@@ -1372,6 +1386,24 @@ bool receive_workload(int msg, int origin) {
       << std::endl;
   m_neighbor_status[origin] = 2;
   m_finished++;
+  return has_workload;
+}*/
+
+
+
+bool receive_workload(int msg, int origin) {
+  bool has_workload = false;
+  if (msg > 0) {
+    m_itmax += msg;
+    has_workload = true;
+    m_neighbor_status[origin] = 0;
+  } else {
+    m_neighbor_status[origin] = 2;
+    m_finished++;
+  }
+  std::cout << rank << ":recebendo carga [" << msg << "] do processo [" << origin
+      << "]."
+      << std::endl;
   return has_workload;
 }
 
@@ -1393,15 +1425,8 @@ bool process_message(int t, int m, int o) {
 
 
 void handle_messages_finalization() {
-  // int flag = -1;
-  // int tag;
-  // int msg;
-  // MPI_Request request;
   MPI_Status status;
-  // while ((!has_workload) && ((m_finished < size - 1) || (m_sended_zero < size - 1))) {
   while (m_sended_zero < size - 1) {
-    /*MPI_Recv(&msg, 1, MPI_INT, MPI_ANY_SOURCE, TAG_FINISHED, MPI_COMM_WORLD, &status);
-    process_message(int tag, int msg, int origin);*/
     if (m_flag) {
       MPI_Irecv(&m_msg, 1, MPI_INT, MPI_ANY_SOURCE, TAG_REQUEST, MPI_COMM_WORLD, &m_request);
       m_flag = 0;
@@ -1426,39 +1451,19 @@ void handle_messages_finalization() {
 
 void handle_messages_iteration() {
   bool has_workload = false;
-  // int flag = -1;
-  // int tag;
   int msg;
-  // MPI_Request request;
   MPI_Status status;
-  // while ((!has_workload) && ((m_finished < size - 1) || (m_sended_zero < size - 1))) {
   while ((!has_workload) && (m_finished < size - 1)) {
     MPI_Recv(&msg, 1, MPI_INT, MPI_ANY_SOURCE, TAG_WORKLOAD, MPI_COMM_WORLD, &status);
     int origin = status.MPI_SOURCE;
     int tag = status.MPI_TAG;
     has_workload = process_message(tag, msg, origin);
-    /*if (flag) {
-      MPI_Irecv(&msg, 1, MPI_INT, MPI_ANY_SOURCE, TAG_WORKLOAD, MPI_COMM_WORLD, &request);
-      flag = 0;
-    }
-    MPI_Test(&request, &flag, &status);
-    if (flag) {
-      int origin = status.MPI_SOURCE;
-      int tag = status.MPI_TAG;
-      has_workload = process_message(int tag, int msg, int origin);
-      flag = -1;
-    } else {
-      MPI_Wait(&m_request, &status);
-      has_workload = process_message(int tag, int msg, int origin);;
-      flag = -1;
-    }*/
   } // while ((!has_workload) && (m_finished < size - 1)) {
 } // void handle_messages_iteration() {
 
 
 
 void handle_messages_calculo() {
-  // std::cout << rank << ":BOO !!!" << std::endl;
   bool checked_msgs = false;
   MPI_Status status;
   while ((!checked_msgs)) {
@@ -1468,54 +1473,13 @@ void handle_messages_calculo() {
     }
     MPI_Test(&m_request, &m_flag, &status);
     if (m_flag) {
-      /*int origin = status.MPI_SOURCE;
-      std::cout << rank << ":recebendo REQUEST do processo [" << origin
-          << "] pelo calculo."
-          << std::endl;
-      receive_request(origin);*/
-
       int origin = status.MPI_SOURCE;
       int tag = status.MPI_TAG;
-
       process_message(tag, m_msg, origin);
-
-      /*if (tag == TAG_REQUEST) {
-        std::cout << rank << ":recebendo REQUEST do processo [" << origin
-            << "] pelo calculo."
-            << std::endl;
-        receive_request(origin);
-      } else if (tag == TAG_WORKLOAD) {
-        / *std::cout << rank << ":recebendo carga [" << m_msg << "] do processo [" << origin
-            << "] pelo iteration."
-            << std::endl;* /
-        receive_workload(m_msg, origin);
-      } else {
-
-      }*/
-
-      // int tag = status.MPI_TAG;
-      // if (tag == TAG_REQUEST)
-      //   receive_request(msg, origin);
-      // else if (tag == TAG_WORKLOAD)
-      //   receive_bottle(msg, origin);
-      // else if (tag == TAG_TURN)
-      //   receive_turn(msg, origin);
-      // else if (tag == TAG_FINISHED)
-      //   receive_finished(msg, origin);
       m_flag = -1;
     } else {
       checked_msgs = true;
     }
-    // if (m_access_counter >= REQUEST_ITERATIONS && !sent_finished_msg) {
-    //   int i;
-    //   for (i = 0; i < m_qty_proccess; i++)
-    //     if (m_rank != i) {
-    //       int inner_msg = MSG_DEFAULT;
-    //       printf("%d:Sending FINISHED to [%d].\n", m_rank, i);
-    //       MPI_Send(&inner_msg, 1, MPI_INT, i, TAG_FINISHED, MPI_COMM_WORLD);
-    //     }
-    //   sent_finished_msg = 1;
-    // }
   } // while ((!checked_msgs) && (m_finished < size - 1)) {
 } // void handle_messages_calculo() {
 
@@ -1523,75 +1487,6 @@ void handle_messages_calculo() {
 
 /* calculo do tempo */
 double Sigraph::calcula_tempo(const timeval start, const timeval end) {
-  /*if (outer_flag) {
-    MPI_Irecv(&outer_msg, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &outer_request);
-    outer_flag = 0;
-  }
-  MPI_Test(&outer_request, &outer_flag, &outer_status);
-  if (outer_flag) {
-    int tag;
-    int origin;
-    int carga = (int) (LIMITE - it) / size;
-    origin = outer_status.MPI_SOURCE;
-    tag = outer_status.MPI_TAG;
-
-    std::cout << rank << ":recebendo msg ["
-        << outer_msg << "] tag [" << tag << "] do processo [" << origin
-        << "] Calcula_tempo." << std::endl;
-
-    if (terminei) {
-      if (outer_msg == 0) {
-        if (!terminou[origin]) {
-          terminou[origin] = true;
-          cont_terminos += 1;
-          if (cont_terminos == size - 1) {
-            fim = true;
-          }
-        }
-      } else {
-        std::cout << rank << ":recebendo carga [" << outer_msg << "] do processo [" << origin
-            << "] Calcula_tempo."
-            << std::endl;
-        it_max += outer_msg;
-      }
-    } else {
-      if (!terminou[origin]) {
-        terminou[origin] = true;
-        cont_terminos += 1;
-        if (cont_terminos == size - 1) {
-          fim = true;
-        }
-      }
-      if (carga == 0 && (LIMITE - it) > 1)
-          carga = 1;
-      MPI_Send(&carga, 1, MPI_INT, origin, 20, MPI_COMM_WORLD);
-      std::cout << rank << ":enviando carga ["
-          << carga << "] para processo [" << origin
-          << "] Calcula_tempo." << std::endl;
-    }
-
-    / *if (tag == 10) {
-      if (carga == 0 && (LIMITE - it) > 1)
-          carga = 1;
-      MPI_Send(&carga, 1, MPI_INT, origin, 20, MPI_COMM_WORLD);
-      std::cout << rank << ":enviando carga ["
-          << carga << "] para processo [" << origin
-          << "] Calcula_tempo." << std::endl;
-    } else if (tag == 20) {
-      if (outer_msg == 0) {
-        terminou[origin] = true;
-        cont_terminos += 1;
-        if (cont_terminos == size - 1)
-          fim = true;
-      } else {
-        std::cout << rank << ":recebendo carga [" << outer_msg << "] do processo [" << origin
-            << "] Calcula_tempo."
-            << std::endl;
-        it_max += outer_msg;
-      }
-    }* /
-    outer_flag = -1;
-  }*/
   handle_messages_calculo();
   return (((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6);
 }
@@ -1623,10 +1518,6 @@ double Sigraph::calcula_tempo(const unsigned long int ini,
 int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C,
     Array<int> &c, Array<int> &cand1, Array<int> &cand2, Array<int> &b_A, Array<int> &b_B,
     int ITMAX, int TIMEMAX, int TEST) {
-
-  // MPI_Status status;
-  // MPI_Request request;
-
   m_itmax = ITMAX;
 
   timeval t_ini_g, end;
@@ -1635,19 +1526,13 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int
   bool moveu, viz_A, viz_B, viz_AB;
   //unsigned long int t_ini_g;
 
-  /*Inicialização do MPI*/
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &size);
-
   /* PARAMETROS */
   int DEPU = 0;
 
   for (int i = 0; i < size; ++i) {
     m_neighbor_status[i] = 0;
-    // m_send_to_neighbor[i] = 0;
   }
   m_neighbor_status[rank] = 2;
-  // m_send_to_neighbor[rank] = 1;
 
   // t_ini_g  = (unsigned long int) clock();
   gettimeofday(&t_ini_g, NULL); //marcador de início do processamento

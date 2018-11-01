@@ -2,10 +2,10 @@
 
 #include <mpi.h>
 #include <sys/time.h>
-
 #include "dmer.h"
 
 extern int size, rank;
+
 //---------------------------------------------------------------------------
 
 Dmer::Dmer(const char * name, int MaxIter, int MaxTime) {
@@ -33,10 +33,7 @@ double Dmer::calcula_tempo(const unsigned long int ini, const unsigned long int 
 //---------------------------------------------------------------------------
 
 void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
-
   MPI_Status status;
-  // MPI_Request request;
-
   int result, best;
 
   int jj;
@@ -91,7 +88,8 @@ void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
           << "]." << "\x1b[0m"  << std::endl;
       if (result > best) best = result;
     }
-    std::cout << "\x1b[1;38m" << rank << ":melhor solução[" << best << "]." << "\x1b[0m" << std::endl;
+    std::cout << "\x1b[1;38m" << rank << ":melhor solução[" << best << "]." << "\x1b[0m"
+        << std::endl;
   }
 
   /* desaloca */

@@ -10,6 +10,19 @@
 
 #include "sig_graph.h"
 
+extern int size, rank;
+
+int m_neighbor_status[PROC_SIZE_MAX];
+
+int m_it = 0;
+int m_flag = -1;
+int m_itmax;
+int m_msg;
+int m_finished = 0;
+int m_sended_zero = 0;
+
+MPI_Request m_request;
+
 /* create thread argument struct for thr_func() */
 typedef struct _thread_data_t {
   int tid;
@@ -33,7 +46,6 @@ int g_i_BC;
 int g_i_AC1;
 int g_i_BC1;
 int parada_1, num_candA, num_candB, num_candC;
-int size, rank;
 bool g_moveu = false;
 int g_tid;
 int g_TIMEMAX;
@@ -2214,8 +2226,166 @@ int Sigraph::obj_grasp_sig_v2(Array<int> &A, Array<int> &B) {
 
 
 
+void send_requests() {
+  for (int i = 0; i < size; i++) {
+    // if (!terminou[i] && !enviei[i]) {
+    if (m_neighbor_status[i] == 0) {
+      int inner_msg = MSG_DEFAULT;
+      std::cout << rank << ":enviando REQUEST para o processo [" << i << "]." << std::endl;
+      MPI_Send(&inner_msg, 1, MPI_INT, i, TAG_REQUEST, MPI_COMM_WORLD);
+      m_neighbor_status[i] = 1;
+    }
+  }
+}
+
+
+
+/*void receive_request(int origin) {
+  int carga = (m_itmax - m_it) / (size);
+  if (carga == 0) {
+    if ((m_itmax - m_it) > 1) {
+      carga = 1;
+    }
+  }
+  m_itmax -= carga;
+  MPI_Send(&carga, 1, MPI_INT, origin, TAG_WORKLOAD, MPI_COMM_WORLD);
+  std::cout << rank << ":enviando WORKLOAD [" << carga << "] para o processo [" << origin << "]." << std::endl;
+  m_sended_zero++;
+}*/
+
+
+
+void receive_request(int origin) {
+  int carga = (m_itmax - m_it) / (size);
+  if (carga == 0) {
+    if ((m_itmax - m_it) > 1) {
+      carga = 1;
+    } else {
+      m_sended_zero++;
+    }
+  }
+  m_itmax -= carga;
+  MPI_Send(&carga, 1, MPI_INT, origin, TAG_WORKLOAD, MPI_COMM_WORLD);
+  std::cout << rank << ":enviando WORKLOAD [" << carga << "] para o processo [" << origin << "]." << std::endl;
+}
+
+
+
+/*bool receive_workload(int msg, int origin) {
+  bool has_workload = false;
+  if (msg > 0) {
+    m_itmax += msg;
+    has_workload = true;
+  }
+  std::cout << rank << ":recebendo carga [" << msg << "] do processo [" << origin
+      << "]."
+      << std::endl;
+  m_neighbor_status[origin] = 2;
+  m_finished++;
+  return has_workload;
+}*/
+
+
+
+bool receive_workload(int msg, int origin) {
+  bool has_workload = false;
+  if (msg > 0) {
+    m_itmax += msg;
+    has_workload = true;
+    m_neighbor_status[origin] = 0;
+  } else {
+    m_neighbor_status[origin] = 2;
+    m_finished++;
+  }
+  std::cout << rank << ":recebendo carga [" << msg << "] do processo [" << origin
+      << "]."
+      << std::endl;
+  return has_workload;
+}
+
+
+
+bool process_message(int t, int m, int o) {
+  bool rc = false;
+  std::cout << rank << ":TAG [" << t << "] MSG [" << m << "] PROC [" << o << "]." << std::endl;
+  if (t == TAG_REQUEST) {
+    receive_request(o);
+  } else if (t == TAG_WORKLOAD) {
+    rc = receive_workload(m, o);
+  } else {
+    std::cout << rank << "!!! ERROR --> UNDEFINED TAG !!!" << std::endl;
+  }
+  return rc;
+}
+
+
+
+void handle_messages_finalization() {
+  MPI_Status status;
+  while (m_sended_zero < size - 1) {
+    if (m_flag) {
+      MPI_Irecv(&m_msg, 1, MPI_INT, MPI_ANY_SOURCE, TAG_REQUEST, MPI_COMM_WORLD, &m_request);
+      m_flag = 0;
+    }
+    MPI_Test(&m_request, &m_flag, &status);
+    if (m_flag) {
+      int origin = status.MPI_SOURCE;
+      int tag = status.MPI_TAG;
+      process_message(tag, m_msg, origin);
+      m_flag = -1;
+    } else {
+      MPI_Wait(&m_request, &status);
+      int origin = status.MPI_SOURCE;
+      int tag = status.MPI_TAG;
+      process_message(tag, m_msg, origin);;
+      m_flag = -1;
+    }
+  } // while ((!has_workload) && (m_finished < size - 1)) {
+} // void handle_messages_iteration() {
+
+
+
+void handle_messages_iteration() {
+  bool has_workload = false;
+  int msg;
+  MPI_Status status;
+  while ((!has_workload) && (m_finished < size - 1)) {
+    MPI_Recv(&msg, 1, MPI_INT, MPI_ANY_SOURCE, TAG_WORKLOAD, MPI_COMM_WORLD, &status);
+    int origin = status.MPI_SOURCE;
+    int tag = status.MPI_TAG;
+    has_workload = process_message(tag, msg, origin);
+  } // while ((!has_workload) && (m_finished < size - 1)) {
+} // void handle_messages_iteration() {
+
+
+
+void handle_messages_calculo() {
+  bool checked_msgs = false;
+  MPI_Status status;
+  while ((!checked_msgs)) {
+    if (m_flag) {
+      MPI_Irecv(&m_msg, 1, MPI_INT, MPI_ANY_SOURCE, TAG_REQUEST, MPI_COMM_WORLD, &m_request);
+      m_flag = 0;
+    }
+    MPI_Test(&m_request, &m_flag, &status);
+    if (m_flag) {
+      int origin = status.MPI_SOURCE;
+      int tag = status.MPI_TAG;
+      process_message(tag, m_msg, origin);
+      m_flag = -1;
+    } else {
+      checked_msgs = true;
+    }
+  } // while ((!checked_msgs) && (m_finished < size - 1)) {
+} // void handle_messages_calculo() {
+
+
+
 /* calculo do tempo */
 double Sigraph::calcula_tempo(const timeval start, const timeval end) {
+  sem_wait(&access_mutex);
+  handle_messages_calculo();
+  sem_post(&access_mutex);
   return (((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6);
 }
 
@@ -2250,32 +2420,38 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     Array<int> &cand2, Array<int> &b_A, Array<int> &b_B, int ITMAX,
     int TIMEMAX, int TEST) {
   g_TIMEMAX = TIMEMAX;
+  m_itmax = ITMAX;
 
-  concurentThreadsSupported = (int) std::thread::hardware_concurrency();
+
+  // concurentThreadsSupported = (int) std::thread::hardware_concurrency();
+  concurentThreadsSupported = 2;
   std::cout << "\x1b[1;35m" << "concurentThreadsSupported = " << concurentThreadsSupported
     << "\x1b[0m" << std::endl;
-  /*Inicialização do MPI*/
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &size);
 
   sem_init(&access_mutex, 0, 1);
 
-  int it, sol, b_sol = -1, vez, ii;
+  timeval t_ini_g, end;
+
+  // int it, sol, b_sol = -1, vez, ii;
+  int sol, b_sol = -1, vez, ii;
   bool moveu, viz_A, viz_B, viz_AB;
   // unsigned long int t_ini_g;
-
-  timeval t_ini_g, end;
 
   /* PARAMETROS */
   int DEPU = 0;
 
-  // t_ini_g  = (unsigned long int) clock();
+  for (int i = 0; i < size; ++i) {
+    m_neighbor_status[i] = 0;
+  }
+  m_neighbor_status[rank] = 2;
 
+  // t_ini_g  = (unsigned long int) clock();
   gettimeofday(&t_ini_g, NULL); //marcador de início do processamento
 
-  for (it = 0; it < ITMAX; it++) {
+  // for (it = 0; it < ITMAX; it++) {
+  for (m_it = 0; m_it < m_itmax; m_it++) {
     sol = metodo_construtivo_grasp_sig_v2(A, a, B, b, C, c, cand1, cand2, TEST);
-    if (DEPU) std::cout << std::endl << "IT = " << it << ") solucao inicial com " << sol << " vertices" << std::endl;
+    if (DEPU) std::cout << std::endl << "IT = " << m_it << ") solucao inicial com " << sol << " vertices" << std::endl;
 
     moveu = true;
     while (moveu) {
@@ -2412,7 +2588,7 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
 
     if (sol > b_sol) {
       b_sol = sol;
-      if (DEPU) std::cout << std::endl << "IT = " << it << ") ---------------------------------- MELHOR SOLUCAO COM " << sol << " VERTICES" << std::endl;
+      if (DEPU) std::cout << std::endl << "IT = " << m_it << ") ---------------------------------- MELHOR SOLUCAO COM " << sol << " VERTICES" << std::endl;
 
       for (ii = 0; ii < n; ii++) {
         b_A[ii] = A[ii];
@@ -2427,7 +2603,7 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
       << " seg"<<std::endl;
 
     gettimeofday(&end, NULL);
-    std::cout << "\x1b[1;31m" << rank << ":" << it << ":TEMPO = "
+    std::cout << "\x1b[1;31m" << rank << ":" << m_it << ":TEMPO = "
         << calcula_tempo(t_ini_g, end)
         << " seg, melhor solucao " << b_sol << ", solucao atual " << sol
         << "\x1b[0m" << std::endl;
@@ -2436,11 +2612,21 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     if (calcula_tempo(t_ini_g, end) > TIMEMAX)
       break;
 
+
+    if (m_it == m_itmax - 1) {
+      send_requests();
+      handle_messages_iteration();
+    }
   } /* for (it=0; it<ITMAX; it++) */
-
+  handle_messages_finalization();
+  if (rank != 0) {
+    std::cout << rank << ":enviando melhor solução [" << b_sol << "] para o processo 0" << std::endl;
+    MPI_Send(&b_sol, 1, MPI_INT, 0, TAG_FINISHED, MPI_COMM_WORLD);
+  } else {
+    std::cout << "\x1b[1;38m"  << rank << ":resposta [" << b_sol << "] do processo [" << rank
+        << "]." << "\x1b[0m"  << std::endl;
+  }
   sem_close(&access_mutex);
-
-  //if (DEPU) std::cout<<std::endl<<"bitibas ("<<it_best<<")\t";
   return b_sol;
 }
 

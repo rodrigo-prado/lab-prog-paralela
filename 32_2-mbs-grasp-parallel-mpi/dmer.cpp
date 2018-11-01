@@ -1,8 +1,10 @@
 //---------------------------------------------------------------------------
 
+#include <mpi.h>
 #include "dmer.h"
-
 #include <sys/time.h>
+
+extern int size, rank;
 
 //---------------------------------------------------------------------------
 
@@ -31,6 +33,9 @@ double Dmer::calcula_tempo(const unsigned long int ini,
 //---------------------------------------------------------------------------
 
 void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
+  MPI_Status status;
+  int result, best;
+
   int jj;
   char arq[256];
   std::ifstream fin;
@@ -67,12 +72,25 @@ void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
   gettimeofday(&start, NULL); //marcador de início do processamento
 //   t_ini2  = (unsigned long int) clock();
   jj = sg.grasp_sig_v2(sg.vet1, f, sg.vet2, f2, sg.vet3, f3, sg.vet4, f4, f5, f6, MaxIter, MaxTime,
-    TEST);
+      TEST);
 /*  std::cout << std::endl << nome << " GRASP = " << jj << " Tempo = "
       << calcula_tempo(t_ini2, (unsigned long int) clock()) << std::endl; */
   gettimeofday(&end, NULL);
   double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6;
-  std::cout << std::endl << nome << " GRASP = " << jj << " Tempo = " << delta << std::endl;
+  std::cout << rank << ":" << nome << " GRASP = " << jj << " Tempo = " << delta << std::endl;
+  best = jj;
+  /* Processo 0 recebe resultados dos outros processos */
+  if (rank == 0) {
+    for (int i = 1; i < size; i++) {
+      std::cout << rank << ":esperando processo " << i << " responder." << std::endl;
+      MPI_Recv(&result, 1, MPI_INT, i, TAG_FINISHED, MPI_COMM_WORLD, &status);
+      std::cout << "\x1b[1;38m"  << rank << ":resposta [" << result << "] do processo [" << i
+          << "]." << "\x1b[0m"  << std::endl;
+      if (result > best) best = result;
+    }
+    std::cout << "\x1b[1;38m" << rank << ":melhor solução[" << best << "]." << "\x1b[0m"
+        << std::endl;
+  }
 
   /* desaloca */
   r.desaloca();

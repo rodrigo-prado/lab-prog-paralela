@@ -24,6 +24,7 @@ int nfree = 0;
 void mserro(const char *clas, const char *func, const char *ms, const int nerr);
 
 //---------------------------------------------------------------------------
+
 int size, rank;
 
 int main(int argc, char *argv[]) {

@@ -25,12 +25,11 @@ void mserro(const char *clas, const char *func, const char * ms, const int nerr)
 
 //---------------------------------------------------------------------------
 
-MPI_Status status;
-MPI_Request request;
+int size, rank;
 
 int main(int argc, char * argv[]) {
   /* Declaração das variáveis */
-  int size, rank;
+  // int size, rank;
   // struct timeval start, end;
   // int col_sum = N * (N - 1) / 2;
 

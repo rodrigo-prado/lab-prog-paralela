@@ -24,18 +24,16 @@
 #define PROC_SIZE_MAX 256
 
 // estrutura aresta do grafo
-typedef struct edge_st
-{
+typedef struct edge_st {
   bool pos;
   bool neg;
 } str_e;
 
 
 // estrutura pilha
-struct ststackno
-{
-   int ind;
-   struct ststackno* proximo;
+struct ststackno {
+  int ind;
+  struct ststackno* proximo;
 };
 typedef struct ststackno* ptstackno;
 
