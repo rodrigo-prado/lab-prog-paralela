@@ -24,7 +24,7 @@ int nfree = 0;
 void mserro(const char *clas, const char *func, const char *ms, const int nerr);
 
 //---------------------------------------------------------------------------
-int size, rank, LIMITE;
+int size, rank;
 
 int main(int argc, char *argv[]) {
   /* Declaração das variáveis */
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
   // std::cout << "Format:" << std::endl;
   // std::cout << "dmer <file> <MaxGraspIter:default=100> <MaxGraspTime:default=300>" << std::endl<<std::endl;
 
-  if (argc < 2){
+  if (argc < 2) {
     std::cout << "Ex: ./dmer graph.g 50 30" << std::endl;
     abort();
   }
@@ -56,18 +56,18 @@ int main(int argc, char *argv[]) {
   // File
   // std::cout<<"  <file> = "<<argv[1]<<std::endl;
 
-  if (argc == 2){
+  if (argc == 2) {
     // std::cout << "  <MaxGraspIter> = " << 100 << std::endl;
     // std::cout << "  <MaxGraspTime> = " << 300 << std::endl;
   }
 
-  if (argc == 3){
+  if (argc == 3) {
     MaxIter = atoi(argv[2]);
     // std::cout << "  <MaxGraspIter> = " << argv[2] << std::endl;
     // std::cout << "  <MaxGraspTime> = " << 300 << std::endl;
   }
 
-  if (argc == 4){
+  if (argc == 4) {
     MaxIter = atoi(argv[2]);
     // std::cout << "  <MaxGraspIter> = " << argv[2] << std::endl;
     MaxTime = atoi(argv[3]);
@@ -84,7 +84,6 @@ int main(int argc, char *argv[]) {
   } else {
     MaxIter = MaxIter / size;
   }
-  LIMITE = MaxIter;
   //printf("Sending %d rows to task %d\n", rows, i);
   std::cout << "\x1b[1;34m" << rank << ":Beginning with " << MaxIter
     << " iterations " << "for the period max of " << MaxTime << " seconds."

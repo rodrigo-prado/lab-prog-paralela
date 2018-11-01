@@ -1,11 +1,9 @@
 //---------------------------------------------------------------------------
 
-#include <mpi.h>
-#include <sys/time.h>
-
 #include "dmer.h"
 
-extern int size, rank;
+#include <sys/time.h>
+
 //---------------------------------------------------------------------------
 
 Dmer::Dmer(const char * name, int MaxIter, int MaxTime) {
@@ -19,26 +17,20 @@ Dmer::Dmer(const char * name, int MaxIter, int MaxTime) {
 //---------------------------------------------------------------------------
 
 /* funcao de tempo
-double Dmer::calcula_tempo(const unsigned long int ini, const unsigned long int fim) {
+double Dmer::calcula_tempo(const unsigned long int ini,
+    const unsigned long int fim) {
   double r;
 
-  if(fim >= ini)
-    r = ((double)(fim - ini)) / CLOCKS_PER_SEC;
+  if (fim >= ini)
+    r = ((double) (fim - ini)) / CLOCKS_PER_SEC;
   else
-    r = ((double)( (fim + (unsigned long int) - 1) - ini)) / CLOCKS_PER_SEC;
+    r = ((double) ((fim + (unsigned long int)-1) - ini)) / CLOCKS_PER_SEC;
   return r;
-}
-*/
+} */
 
 //---------------------------------------------------------------------------
 
 void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
-
-  MPI_Status status;
-  // MPI_Request request;
-
-  int result, best;
-
   int jj;
   char arq[256];
   std::ifstream fin;
@@ -53,11 +45,11 @@ void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
   //int    DEPU         = 1;
   int TEST = 0;
 
-  // unsigned long int t_ini2;
+  // unsigned long int   t_ini2;
 
   timeval start, end;
 
-  strcpy(arq,nome);
+  strcpy(arq, nome);
   fin.open(arq);
 
   /* constroi grafo de sinais */
@@ -73,26 +65,14 @@ void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
 
   /* Grasp */
   gettimeofday(&start, NULL); //marcador de início do processamento
-  // t_ini2  = (unsigned long int) clock();
+//   t_ini2  = (unsigned long int) clock();
   jj = sg.grasp_sig_v2(sg.vet1, f, sg.vet2, f2, sg.vet3, f3, sg.vet4, f4, f5, f6, MaxIter, MaxTime,
-      TEST);
-  /*std::cout << std::endl << nome << " GRASP = " << jj << " Tempo = "
-      << calcula_tempo(t_ini2, (unsigned long int) clock()) << std::endl;*/
+    TEST);
+/*  std::cout << std::endl << nome << " GRASP = " << jj << " Tempo = "
+      << calcula_tempo(t_ini2, (unsigned long int) clock()) << std::endl; */
   gettimeofday(&end, NULL);
   double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6;
-  std::cout << rank << ":" << nome << " GRASP = " << jj << " Tempo = " << delta << std::endl;
-  best = jj;
-  /* Processo 0 recebe resultados dos outros processos */
-  if (rank == 0) {
-    for (int i = 1; i < size; i++) {
-      std::cout << rank << ":esperando processo " << i << " responder." << std::endl;
-      MPI_Recv(&result, 1, MPI_INT, i, TAG_FINISHED, MPI_COMM_WORLD, &status);
-      std::cout << "\x1b[1;38m"  << rank << ":resposta [" << result << "] do processo [" << i
-          << "]." << "\x1b[0m"  << std::endl;
-      if (result > best) best = result;
-    }
-    std::cout << "\x1b[1;38m" << rank << ":melhor solução[" << best << "]." << "\x1b[0m" << std::endl;
-  }
+  std::cout << std::endl << nome << " GRASP = " << jj << " Tempo = " << delta << std::endl;
 
   /* desaloca */
   r.desaloca();
