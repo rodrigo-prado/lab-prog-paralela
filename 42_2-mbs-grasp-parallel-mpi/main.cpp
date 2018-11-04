@@ -1,6 +1,7 @@
 
 //---------------------------------------------------------------------------
 
+#include <limits>
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -19,25 +20,23 @@ int nfree = 0;
 #include "dmer.h"
 #include "structs.h"
 
+int m_target;
+
 //---------------------------------------------------------------------------
 
 void mserro(const char *clas, const char *func, const char * ms, const int nerr);
 
 //---------------------------------------------------------------------------
 
-MPI_Status status;
-MPI_Request request;
+int size, rank;
 
 int main(int argc, char * argv[]) {
-  /* Declaração das variáveis */
-  int size, rank;
-  // struct timeval start, end;
-  // int col_sum = N * (N - 1) / 2;
-
   /*Inicialização do MPI*/
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+  m_target = std::numeric_limits<int>::max();
 
   int MaxIter = 100;
   int MaxTime = 300; //segundos
@@ -76,10 +75,15 @@ int main(int argc, char * argv[]) {
     // std::cout << "  <MaxGraspTime> = " << argv[3] << std::endl;
   }
 
-  /*std::cout << "MPI has started with " << size
-    << " processes for the max period of " << MaxTime << " seconds."
-    << std::endl;*/
-  // printf("MPI has started with %d tasks.\n", size);
+  if (argc == 5) {
+    MaxIter = atoi(argv[2]);
+    // std::cout << "  <MaxGraspIter> = " << argv[2] << std::endl;
+    MaxTime = atoi(argv[3]);
+    // std::cout << "  <MaxGraspTime> = " << argv[3] << std::endl;
+    m_target = atoi(argv[4]);
+    // std::cout << "  <Target> = " << argv[4] << std::endl;
+  }
+
   /* construtor do problema */
   if (rank < MaxIter % size) {
     MaxIter = (MaxIter / size) + 1;
@@ -87,9 +91,8 @@ int main(int argc, char * argv[]) {
     MaxIter = MaxIter / size;
   }
   //printf("Sending %d rows to task %d\n", rows, i);
-  std::cout << "\x1b[1;34m" << rank << ":Beginning with " << MaxIter
-    << " iterations " << "for the period max of " << MaxTime << " seconds."
-    << "\x1b[0m" << std::endl;
+  // std::cout << "\x1b[1;34m" << rank << ":Beginning with " << MaxIter << " iterations "
+  //     << "for the period max of " << MaxTime << " seconds." << "\x1b[0m" << std::endl;
 
   Dmer prob(argv[1], MaxIter, MaxTime);
 

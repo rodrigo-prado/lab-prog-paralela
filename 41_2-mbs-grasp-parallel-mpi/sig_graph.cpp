@@ -6,6 +6,17 @@
 
 extern int size, rank;
 
+extern int m_n_viz_1a;
+extern int m_n_viz_1b;
+extern int m_n_viz_2a;
+extern int m_n_viz_2b;
+extern int m_n_viz_ab;
+
+extern int m_target;
+extern double m_ttt;
+
+MPI_Request m_request;
+
 // gera grafo a partir de um arquivo .G
 float Sigraph::ini(std::ifstream &fin) {
   int i, j, n_are, a1, a2, at, ip, in;
@@ -82,7 +93,6 @@ float Sigraph::ini(std::ifstream &fin) {
 
   return (cont_neg / cont_pos);
 }
-
 
 //-------------------------------------------------------------------------------
 
@@ -923,9 +933,10 @@ int Sigraph::viz_down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<in
 
 	    moveu = move_2_C_AB_v2(vert_AC, 0, A, a, B, b, C, c, cand1, cand2, TEST);
 
-	    if (moveu == true)
+	    if (moveu == true) {
+        m_n_viz_1a++;
 	      break;
-	    else {
+      } else {
     		/* <--- */
     		C[vert_AC] = 0;
     		A[vert_AC] = 1;
@@ -982,9 +993,10 @@ int Sigraph::viz_down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<in
 
 	    moveu = move_2_C_AB_v2(vert_BC, 1, A, a, B, b, C, c, cand1, cand2, TEST);
 
-	    if (moveu==true)
+	    if (moveu == true) {
+        m_n_viz_1b++;
 	      break;
-	    else {
+      } else {
     		/* <--- */
     		C[vert_BC] = 0;
     		B[vert_BC] = 1;
@@ -1056,9 +1068,10 @@ int Sigraph::viz_2down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<i
 
           moveu = move_3_C_AB_v2(vert_AC1, vert_AC2, 0, 0, A, a, B, b, C, c, cand1, cand2, TEST);
 
-          if (moveu==true)
+          if (moveu == true) {
+            m_n_viz_2a++;
             break;
-          else {
+          } else {
   		      /* <--- */
   		      C[vert_AC2] = 0;
   		      A[vert_AC2] = 1;
@@ -1154,9 +1167,10 @@ int Sigraph::viz_2down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<i
 
           moveu = move_3_C_AB_v2(vert_BC1, vert_BC2, 1, 1, A, a, B, b, C, c, cand1, cand2, TEST);
 
-          if (moveu == true)
+          if (moveu == true) {
+            m_n_viz_2b++;
             break;
-          else {
+          } else {
   		      /* <--- */
   		      C[vert_BC2] = 0;
   		      B[vert_BC2] = 1;
@@ -1253,9 +1267,10 @@ int Sigraph::viz_2down_AB_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<
 
           moveu = move_3_C_AB_v2(vert_AC1, vert_BC1, 0, 1, A, a, B, b, C, c, cand1, cand2, TEST);
 
-          if (moveu == true)
+          if (moveu == true) {
+            m_n_viz_ab++;
             break;
-          else {
+          } else {
   		      /* <--- */
   		      C[vert_BC1] = 0;
   		      B[vert_BC1] = 1;
@@ -1352,18 +1367,10 @@ double Sigraph::calcula_tempo(const unsigned long int ini,
 int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b, Array<int> &C,
     Array<int> &c, Array<int> &cand1, Array<int> &cand2, Array<int> &b_A, Array<int> &b_B,
     int ITMAX, int TIMEMAX, int TEST) {
-
-  // MPI_Status status;
-  // MPI_Request request;
-
   timeval t_ini_g, end;
   int it, sol, b_sol = -1, vez, ii;
   bool moveu, viz_A, viz_B, viz_AB;
   //unsigned long int t_ini_g;
-
-  /*Inicialização do MPI*/
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &size);
 
   /* PARAMETROS */
   int DEPU = 0;
@@ -1371,6 +1378,7 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int
   // t_ini_g  = (unsigned long int) clock();
   gettimeofday(&t_ini_g, NULL); //marcador de início do processamento
 
+  // for (it = 0; it < ITMAX; it++) {
   for (it = 0; it < ITMAX; it++) {
     sol = metodo_construtivo_grasp_sig_v2(A, a, B, b, C, c, cand1, cand2, TEST);
     if (DEPU) std::cout << std::endl << "IT = " << it << ") solucao inicial com " << sol
@@ -1503,7 +1511,15 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int
     }
 
     if (sol > b_sol) {
+      double l_delta;
       b_sol = sol;
+
+      gettimeofday(&end, NULL);
+      l_delta = calcula_tempo(t_ini_g, end);
+      if (b_sol >= m_target && l_delta < m_ttt) {
+        m_ttt = l_delta;
+      }
+
       if (DEPU) std::cout << std::endl << "IT = " << it
           << ") ---------------------------------- MELHOR SOLUCAO COM " << sol << " VERTICES"
           << std::endl;
@@ -1520,26 +1536,28 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int
       std::cout<<std::endl << "TEMPO = " << calcula_tempo(t_ini_g, end) << " seg" << std::endl;
     }
 
-    gettimeofday(&end, NULL);
-    std::cout << "\x1b[1;31m" << rank << ":" << it << ":TEMPO = "
-        << calcula_tempo(t_ini_g, end)
-        << " seg, melhor solucao " << b_sol << ", solucao atual " << sol
-        << "\x1b[0m" << std::endl;
+    // gettimeofday(&end, NULL);
+    // std::cout << "\x1b[1;31m" << rank << ":" << it << ":TEMPO = " << calcula_tempo(t_ini_g, end)
+    //     << " seg, melhor solucao " << b_sol << ", solucao atual " << sol << "\x1b[0m" << std::endl;
 
     gettimeofday(&end, NULL);
     if (calcula_tempo(t_ini_g, end) > TIMEMAX)
       break;
+
   } /* for (it=0; it<ITMAX; it++) */
-
   if (rank != 0) {
-    std::cout << rank << ":enviando melhor solução [" << b_sol << "] para o processo 0" << std::endl;
+    // std::cout << rank << ":enviando melhor solução [" << b_sol << "] para o processo 0" << std::endl;
     MPI_Send(&b_sol, 1, MPI_INT, 0, TAG_FINISHED, MPI_COMM_WORLD);
+    MPI_Send(&m_ttt, 1, MPI_DOUBLE, 0, TAG_FINISHED, MPI_COMM_WORLD);
+    MPI_Send(&m_n_viz_1a, 1, MPI_INT, 0, TAG_FINISHED, MPI_COMM_WORLD);
+    MPI_Send(&m_n_viz_1b, 1, MPI_INT, 0, TAG_FINISHED, MPI_COMM_WORLD);
+    MPI_Send(&m_n_viz_2a, 1, MPI_INT, 0, TAG_FINISHED, MPI_COMM_WORLD);
+    MPI_Send(&m_n_viz_2b, 1, MPI_INT, 0, TAG_FINISHED, MPI_COMM_WORLD);
+    MPI_Send(&m_n_viz_ab, 1, MPI_INT, 0, TAG_FINISHED, MPI_COMM_WORLD);
   } else {
-    std::cout << "\x1b[1;38m"  << rank << ":resposta [" << b_sol << "] do processo [" << rank
-        << "]." << "\x1b[0m"  << std::endl;
+    // std::cout << "\x1b[1;38m"  << rank << ":resposta [" << b_sol << "] do processo [" << rank
+    //     << "]." << "\x1b[0m"  << std::endl;
   }
-
-  //if (DEPU) std::cout<<std::endl<<"bitibas ("<<it_best<<")\t";
   return b_sol;
 }
 

@@ -1,8 +1,8 @@
 ########### COMPILADORES E PARAMETROS
 #CCC           = g++-5
 CCC           = mpic++
-CFLAGS        =  -Wall  -Wno-deprecated -Wno-write-strings -O3 -std=c++11  #-ansi
-# DEBUG         =  -D DEBUG_ALL
+CFLAGS        =  -Wall -Wno-deprecated -Wno-write-strings -O3 -std=c++11  #-ansi
+#DEBUG         =  -D DEBUG_ALL
 
 # Fontes
 DIRS    := .

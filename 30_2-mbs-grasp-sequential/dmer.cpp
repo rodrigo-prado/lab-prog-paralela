@@ -1,8 +1,20 @@
 //---------------------------------------------------------------------------
 
+#include <limits>
+#include <sys/time.h>
+
 #include "dmer.h"
 
-#include <sys/time.h>
+
+int m_n_viz_1a = 0;
+int m_n_viz_1b = 0;
+int m_n_viz_2a = 0;
+int m_n_viz_2b = 0;
+int m_n_viz_ab = 0;
+
+extern int m_target;
+double m_ttt;
+
 
 //---------------------------------------------------------------------------
 
@@ -63,6 +75,8 @@ void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
   f5.aloca(sg.n + 5);
   f6.aloca(sg.n + 5);
 
+  m_ttt = std::numeric_limits<double>::max();
+
   /* Grasp */
   gettimeofday(&start, NULL); //marcador de início do processamento
 //   t_ini2  = (unsigned long int) clock();
@@ -72,7 +86,20 @@ void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
       << calcula_tempo(t_ini2, (unsigned long int) clock()) << std::endl; */
   gettimeofday(&end, NULL);
   double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6;
-  std::cout << std::endl << nome << " GRASP = " << jj << " Tempo = " << delta << std::endl;
+  // std::cout << std::endl << nome << " GRASP = " << jj << " Tempo = " << delta << std::endl;
+  //
+  // std::cout << "\x1b[1;36m"  << 0 << ":m_n_viz_1a [" << m_n_viz_1a << "]." << "\x1b[0m"
+  //     << std::endl;
+  // std::cout << "\x1b[1;36m"  << 0 << ":m_n_viz_1b [" << m_n_viz_1b << "]." << "\x1b[0m"
+  //     << std::endl;
+  // std::cout << "\x1b[1;36m"  << 0 << ":m_n_viz_2a [" << m_n_viz_2a << "]." << "\x1b[0m"
+  //     << std::endl;
+  // std::cout << "\x1b[1;36m"  << 0 << ":m_n_viz_2b [" << m_n_viz_2b << "]." << "\x1b[0m"
+  //     << std::endl;
+  // std::cout << "\x1b[1;36m"  << 0 << ":m_n_viz_ab [" << m_n_viz_ab << "]." << "\x1b[0m"
+  //     << std::endl;
+
+  std::cout << jj << "," << delta << "," << m_target << "," << m_ttt << std::endl;
 
   /* desaloca */
   r.desaloca();

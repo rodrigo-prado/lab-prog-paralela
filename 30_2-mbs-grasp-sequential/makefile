@@ -1,11 +1,11 @@
 ########### COMPILADORES E PARAMETROS
 #CCC           = g++-5
 CCC           = g++
-CFLAGS        =  -Wall  -Wno-deprecated -Wno-write-strings -O3 #-ansi
-DEBUG         =  -D DEBUG_ALL
+CFLAGS        = -Wall -Wno-deprecated -Wno-write-strings -O3 #-ansi
+#DEBUG         =  -D DEBUG_ALL
 
 # Fontes
-DIRS    := . 
+DIRS    := .
 SOURCES := $(foreach dir, $(DIRS), $(wildcard $(dir)/*.cpp))
 OBJS    := $(patsubst %.cpp, %.o, $(SOURCES))
 
@@ -14,14 +14,14 @@ OBJS    := $(patsubst %.cpp, %.o, $(SOURCES))
 # Matematica
 LIBSM          =  -lm -lrt
 
-LIBS = $(LIBSM) 
+LIBS = $(LIBSM)
 
 #### COPILAR
 
 all: dmer
 
 dmer: ${OBJS}
-	${CCC} ${CFLAGS}  $(DEBUG) -o $@ $(OBJS) $(LIBS)
+	${CCC} ${CFLAGS} $(DEBUG) -o $@ $(OBJS) $(LIBS)
 
 .cpp.o:
 	$(CCC) $(CFLAGS) $(DEBUG) $< -c -o $@

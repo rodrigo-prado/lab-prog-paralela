@@ -2,7 +2,8 @@
 echo "Proccess execution"
 
 # Building the launching command
-command="mpirun -np 12 mul_mat.exe"
+#command="./dmer danoint.mps.g.g 100 30000 96"
+command="./dmer danoint.mps.g.g 100 30000"
 
 $command
 TWE=$?

@@ -1,15 +1,23 @@
 
 #include "sig_graph.h"
-
 #include <sys/time.h>
+
+extern int m_n_viz_1a;
+extern int m_n_viz_1b;
+extern int m_n_viz_2a;
+extern int m_n_viz_2b;
+extern int m_n_viz_ab;
+
+extern int m_target;
+extern double m_ttt;
 
 // gera grafo a partir de um arquivo .G
 float Sigraph::ini(std::ifstream &fin) {
   int i, j, n_are, a1, a2, at, ip, in;
   str_e  e;
   int DEPU = 0;
-  float cont_pos=0, cont_neg=0;
-  if (DEPU) std::cout<<"construindo sg, "<<std::endl;
+  float cont_pos = 0, cont_neg = 0;
+  if (DEPU) std::cout << "construindo sg, " << std::endl;
 
   /* aloca */
   fin>>n;
@@ -21,9 +29,9 @@ float Sigraph::ini(std::ifstream &fin) {
   n_pontes = 0;
   n_add_preproc = 0;
   /* aloca */
-  g.aloca(n,n);
-  Gp.aloca(n,n);
-  Gn.aloca(n,n);
+  g.aloca(n, n);
+  Gp.aloca(n, n);
+  Gn.aloca(n, n);
   map.aloca(n);
   stat.aloca(n);
   comp.aloca(n);
@@ -70,8 +78,8 @@ float Sigraph::ini(std::ifstream &fin) {
   for (i = 0; i < n; ++i) {
     ip = in = 0;
     for (j = 0; j < n; ++j) {
-  	  if (g(i,j).pos) Gp(i, ip++) = j;
-  	  if (g(i,j).neg) Gn(i, in++) = j;
+  	  if (g(i, j).pos) Gp(i, ip++) = j;
+  	  if (g(i, j).neg) Gn(i, in++) = j;
     }
   }
   if (DEPU) Gp.imprime();
@@ -79,7 +87,6 @@ float Sigraph::ini(std::ifstream &fin) {
 
   return (cont_neg / cont_pos);
 }
-
 
 //-------------------------------------------------------------------------------
 
@@ -185,12 +192,13 @@ void Sigraph::testa_particoes_grasp_sig_v2(Array<int> &A, Array<int> &a, Array<i
 }
 
 
+
 /* atualiza vetores a e b */
 void Sigraph::atualiza_a_b_c(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b,
     Array<int> &C, Array<int> &c) {
   int temA, temB, temC, i;
 
-  for (temA = temB = temC = i = 0; i<n; i++) {
+  for (temA = temB = temC = i = 0; i < n; i++) {
     if (A[i] == 1) {
       a[temA] = i;
       temA++;
@@ -210,6 +218,7 @@ void Sigraph::atualiza_a_b_c(Array<int> &A, Array<int> &a, Array<int> &B, Array<
 }
 
 
+
 /* metodo construtivo do GRASP para o problema do grafo de sinais */
 int Sigraph::metodo_construtivo_grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B,
     Array<int> &b, Array<int> &C,  Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST) {
@@ -219,7 +228,7 @@ int Sigraph::metodo_construtivo_grasp_sig_v2(Array<int> &A, Array<int> &a, Array
   int DEPU = 0;
 
   if (DEPU) std::cout << std::endl <<
-    "*************  metodo_construtivo_grasp_sig  ****************** " << std::endl;
+      "*************  metodo_construtivo_grasp_sig  ****************** " << std::endl;
 
   /* inicializa conjuntos */
   A.set(0);
@@ -324,7 +333,6 @@ int Sigraph::metodo_construtivo_grasp_sig_v2(Array<int> &A, Array<int> &a, Array
   if (TEST) testa_particoes_grasp_sig_v2(A, a, B, b, C, c);
   return num_sol;
 }
-
 
 
 
@@ -507,7 +515,7 @@ int Sigraph::can_2move_C_AB_v2(int l1, int l2, int num_candA, int num_candB, Arr
     testa_AB = false;
     testa_BA = false;
     testa_BB = false;
-    vez = (int)(rand() % 4);
+    vez = (int) (rand() % 4);
 
     while (!testa_AA || !testa_AB || !testa_BA || !testa_BB) {
   	  /* -> AA */
@@ -523,7 +531,7 @@ int Sigraph::can_2move_C_AB_v2(int l1, int l2, int num_candA, int num_candB, Arr
   	  if ((vez == 1) && (!testa_AB)) {
         if (can_move_C_X_v2(c[l1], a, b, C)) {
           a[num_candA] = c[l1];
-          a[num_candA+1] = -1;
+          a[num_candA + 1] = -1;
           c[l1] = -2;
 
           if (can_move_C_X_v2(c[l2], b, a, C)) {
@@ -541,7 +549,7 @@ int Sigraph::can_2move_C_AB_v2(int l1, int l2, int num_candA, int num_candB, Arr
   	  if ((vez == 2) && (!testa_BA)) {
         if (can_move_C_X_v2(c[l1], b, a, C)) {
           b[num_candB] = c[l1];
-          b[num_candB+1] = -1;
+          b[num_candB + 1] = -1;
           c[l1] = -2;
 
           if (can_move_C_X_v2(c[l2], a, b, C)) {
@@ -552,7 +560,7 @@ int Sigraph::can_2move_C_AB_v2(int l1, int l2, int num_candA, int num_candB, Arr
         }
 
 	      testa_BA = true;
-	      vez      = 3;
+	      vez = 3;
 	    }
 
   	  /* -> BB */
@@ -561,7 +569,7 @@ int Sigraph::can_2move_C_AB_v2(int l1, int l2, int num_candA, int num_candB, Arr
 		      return 4;
 
   	      testa_BB = true;
-  	      vez      = 0;
+  	      vez = 0;
 	    }
     }/* while (!testa_AA || !testa_AB || !testa_BA || !testa_BB) */
   }/* if ((stat[l1] == 1) && (C[l1] == 1) && (stat[l2] == 1) && (C[l2] == 1)) */
@@ -593,7 +601,7 @@ bool Sigraph::move_2_C_AB_v2(int desceu, int origem, Array<int> &A, Array<int> &
     if ((vez == 1) && (!moveu) && (!testa_A)) {
       for (parada_2 = num_candC, i_swap = (int) (rand() % num_candC);
           parada_2 > 0 && (moveu == false); i_swap++) {
-        vert_swap    = c[i_swap];
+        vert_swap = c[i_swap];
 	      if ((vert_swap != -2) && (stat[vert_swap] == 1)
             && (C[vert_swap] == 1) && ((desceu != vert_swap) || (origem != 0))) {
           e_cand = can_move_C_X_v2(vert_swap, a, b, C);
@@ -604,7 +612,7 @@ bool Sigraph::move_2_C_AB_v2(int desceu, int origem, Array<int> &A, Array<int> &
   		      C[vert_swap] = 0;
   		      c[i_swap] = -2;
   		      a[num_candA] = vert_swap;
-  		      a[num_candA+1] = -1;
+  		      a[num_candA + 1] = -1;
 
             /* 3 NIVEL) C -> A ou B */
             for (parada_3 = num_candC, l = (int) (rand() % num_candC);
@@ -663,10 +671,10 @@ bool Sigraph::move_2_C_AB_v2(int desceu, int origem, Array<int> &A, Array<int> &
   		      C[vert_swap] = 0;
   		      c[i_swap] = -2;
   		      b[num_candB] = vert_swap;
-  		      b[num_candB+1] = -1;
+  		      b[num_candB + 1] = -1;
 
   		      /* 3 NIVEL) C -> A ou B */
-  		      for (parada_3=num_candC, l=(int)(rand() % num_candC);
+  		      for (parada_3 = num_candC, l=(int)(rand() % num_candC);
                 parada_3 > 0 && (moveu==false); l++) {
               if (c[l] != -2) {
                 j = can_move_C_AB_v2(c[l], a, b, C, TEST);
@@ -749,7 +757,7 @@ bool Sigraph::move_3_C_AB_v2(int desceu1, int desceu2, int origem1, int origem2,
               C[vert_swap] = 0;
               c[i_swap] = -2;
               a[num_candA] = vert_swap;
-              a[num_candA+1] = -1;
+              a[num_candA + 1] = -1;
 
             /* 3 NIVEL) 2C -> A ou B */
             for (parada_3 = num_candC, l1 = (int) (rand() % num_candC);
@@ -785,10 +793,10 @@ bool Sigraph::move_3_C_AB_v2(int desceu1, int desceu2, int origem1, int origem2,
                         atualiza_a_b_c(A, a, B, b, C, c); moveu = true;
                       }
                   }/*if ((c[l2] != -2) && (c[l1] < c[l2]) && (stat[c[l2]] == 1) && (C[c[l2]] == 1)) */
-                  if (l2 == (num_candC-1)) l2 = -1;
+                  if (l2 == (num_candC - 1)) l2 = -1;
                   parada_4--;
                 }/* for (parada_4=num_candC, l2=(int)(rand() % num_candC); parada_4 > 0 && (moveu==false); l2++) */
-              if (l1 == (num_candC-1)) l1 = -1;
+              if (l1 == (num_candC - 1)) l1 = -1;
               parada_3--;
             }/* for (parada_3=num_candC, l1=(int)(rand() % num_candC); parada_3 > 0 && (moveu==false); l1++) */
             if (!moveu) {
@@ -804,7 +812,7 @@ bool Sigraph::move_3_C_AB_v2(int desceu1, int desceu2, int origem1, int origem2,
         parada_2--;
       }/* for (parada_2=num_candC, i_swap=(int)(rand() ...*/
   	  testa_A = true;
-  	  vez     = 0;
+  	  vez = 0;
     }/* if ((vez == 1) && (!moveu) && (!testa_A)) */
 
     /* -----------> 2 NIVEL) C -> B */
@@ -825,7 +833,7 @@ bool Sigraph::move_3_C_AB_v2(int desceu1, int desceu2, int origem1, int origem2,
   		      C[vert_swap] = 0;
   		      c[i_swap] = -2;
   		      b[num_candB] = vert_swap;
-  		      b[num_candB+1] = -1;
+  		      b[num_candB + 1] = -1;
 
             /* 3 NIVEL) 2C -> A ou B */
             for (parada_3 = num_candC, l1 = (int) (rand() % num_candC);
@@ -870,13 +878,13 @@ bool Sigraph::move_3_C_AB_v2(int desceu1, int desceu2, int origem1, int origem2,
             if (!moveu) {
       			  C[vert_swap] = 1;
       			  B[vert_swap] = 0;
-      			  c[i_swap]    = vert_swap;
+      			  c[i_swap] = vert_swap;
       			  b[num_candB] = -1;
       			  if (TEST) testa_particoes_grasp_sig_v2(A, a, B, b, C, c);
       			}
           }/* if (e_cand)  */
         }/* if ((vert_swap != -2) && (stat[vert_swap] == 1) &&... */
-        if (i_swap == (num_candC-1)) i_swap = -1;
+        if (i_swap == (num_candC - 1)) i_swap = -1;
         parada_2--;
       }/* for (parada_2=num_candC, i_swap=(int)(rand() ...*/
       testa_B = true;
@@ -892,11 +900,11 @@ bool Sigraph::move_3_C_AB_v2(int desceu1, int desceu2, int origem1, int origem2,
 int Sigraph::viz_down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int> &b,
     Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST, timeval t_ini_g) {
   int num_candA, num_candC, vert_AC, i_AC, parada_1;
-  bool moveu=false;
+  bool moveu = false;
 
   int DEPU = 0;
 
-  if (DEPU) std::cout<<std::endl<<"*************  viz_down_A  ****************** "<<std::endl;
+  if (DEPU) std::cout << std::endl << "*************  viz_down_A  ****************** " << std::endl;
 
   /* ----------------------------- conta numero de candidatos de A e C */
   for (num_candA = 0; a[num_candA] != -1; num_candA++);
@@ -920,9 +928,10 @@ int Sigraph::viz_down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<in
 
 	    moveu = move_2_C_AB_v2(vert_AC, 0, A, a, B, b, C, c, cand1, cand2, TEST);
 
-	    if (moveu == true)
+	    if (moveu == true) {
+        m_n_viz_1a++;
 	      break;
-	    else {
+      } else {
     		/* <--- */
     		C[vert_AC] = 0;
     		A[vert_AC] = 1;
@@ -950,7 +959,7 @@ int Sigraph::viz_down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<in
     Array<int> &C, Array<int> &c, Array<int> &cand1, Array<int> &cand2, int TEST,
     timeval t_ini_g) {
   int num_candB, num_candC, vert_BC, i_BC, parada_1;
-  bool moveu=false;
+  bool moveu = false;
 
   int DEPU = 0;
 
@@ -979,9 +988,10 @@ int Sigraph::viz_down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<in
 
 	    moveu = move_2_C_AB_v2(vert_BC, 1, A, a, B, b, C, c, cand1, cand2, TEST);
 
-	    if (moveu==true)
+	    if (moveu == true) {
+        m_n_viz_1b++;
 	      break;
-	    else {
+      } else {
     		/* <--- */
     		C[vert_BC] = 0;
     		B[vert_BC] = 1;
@@ -1009,7 +1019,7 @@ int Sigraph::viz_2down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<i
     int TIMEMAX) {
   timeval end;
   int vert_AC1, vert_AC2, i_AC1, i_AC2, parada_1, parada_2, num_candA, num_candC;
-  bool moveu=false;
+  bool moveu = false;
 
   int DEPU = 0;
 
@@ -1053,9 +1063,10 @@ int Sigraph::viz_2down_A_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<i
 
           moveu = move_3_C_AB_v2(vert_AC1, vert_AC2, 0, 0, A, a, B, b, C, c, cand1, cand2, TEST);
 
-          if (moveu==true)
+          if (moveu == true) {
+            m_n_viz_2a++;
             break;
-          else {
+          } else {
   		      /* <--- */
   		      C[vert_AC2] = 0;
   		      A[vert_AC2] = 1;
@@ -1151,9 +1162,10 @@ int Sigraph::viz_2down_B_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<i
 
           moveu = move_3_C_AB_v2(vert_BC1, vert_BC2, 1, 1, A, a, B, b, C, c, cand1, cand2, TEST);
 
-          if (moveu == true)
+          if (moveu == true) {
+            m_n_viz_2b++;
             break;
-          else {
+          } else {
   		      /* <--- */
   		      C[vert_BC2] = 0;
   		      B[vert_BC2] = 1;
@@ -1250,9 +1262,10 @@ int Sigraph::viz_2down_AB_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<
 
           moveu = move_3_C_AB_v2(vert_AC1, vert_BC1, 0, 1, A, a, B, b, C, c, cand1, cand2, TEST);
 
-          if (moveu == true)
+          if (moveu == true) {
+            m_n_viz_ab++;
             break;
-          else {
+          } else {
   		      /* <--- */
   		      C[vert_BC1] = 0;
   		      B[vert_BC1] = 1;
@@ -1362,7 +1375,7 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int
   // t_ini_g  = (unsigned long int) clock();
   gettimeofday(&t_ini_g, NULL); //marcador de início do processamento
 
-  for (it=0; it<ITMAX; it++) {
+  for (it = 0; it < ITMAX; it++) {
     sol = metodo_construtivo_grasp_sig_v2(A, a, B, b, C, c, cand1, cand2, TEST);
     if (DEPU) std::cout << std::endl << "IT = " << it << ") solucao inicial com " << sol
         << " vertices" << std::endl;
@@ -1494,7 +1507,15 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int
     }
 
     if (sol > b_sol) {
+      double l_delta;
       b_sol = sol;
+
+      gettimeofday(&end, NULL);
+      l_delta = calcula_tempo(t_ini_g, end);
+      if (b_sol >= m_target && l_delta < m_ttt) {
+        m_ttt = l_delta;
+      }
+
       if (DEPU) std::cout << std::endl << "IT = " << it
           << ") ---------------------------------- MELHOR SOLUCAO COM " << sol << " VERTICES"
           << std::endl;
@@ -1508,20 +1529,20 @@ int Sigraph::grasp_sig_v2(Array<int> &A, Array<int> &a, Array<int> &B, Array<int
     /* teste de parada por tempo */
     if (DEPU) {
       gettimeofday(&end, NULL);
-      std::cout<<std::endl<<"TEMPO = "<<calcula_tempo(t_ini_g, end)<<" seg"<<std::endl;
+      std::cout<<std::endl << "TEMPO = " << calcula_tempo(t_ini_g, end) << " seg" << std::endl;
     }
 
-    gettimeofday(&end, NULL);
-
-    std::cout << "\x1b[1;31m" << "0:TEMPO = "
-        << calcula_tempo(t_ini_g, end)
-        << " seg, melhor solucao " << b_sol << ", solucao atual " << sol << "\x1b[0m" << std::endl;
+    // gettimeofday(&end, NULL);
+    // std::cout << "\x1b[1;31m" << "0:TEMPO = "
+    //     << calcula_tempo(t_ini_g, end)
+    //     << " seg, melhor solucao " << b_sol << ", solucao atual " << sol << "\x1b[0m" << std::endl;
 
     gettimeofday(&end, NULL);
     if (calcula_tempo(t_ini_g, end) > TIMEMAX)
       break;
   } /* for (it=0; it<ITMAX; it++) */
   //if (DEPU) std::cout<<std::endl<<"bitibas ("<<it_best<<")\t";
+
   return b_sol;
 }
 
@@ -1534,8 +1555,8 @@ void Sigraph::write_sol(const char *name, Array<int> &A, Array<int> &B) {
   char name_G[256];
 
   /* abre arquivo de saida */
-  strcpy (name_G,name);
-  strcat (name_G,".sol");
+  strcpy (name_G, name);
+  strcat (name_G, ".sol");
   arq_out.open(name_G);
 
   /* escreve vertices de A */

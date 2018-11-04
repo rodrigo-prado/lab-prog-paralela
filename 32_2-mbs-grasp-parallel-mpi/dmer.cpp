@@ -1,10 +1,20 @@
 //---------------------------------------------------------------------------
 
 #include <mpi.h>
+#include <limits>
 #include "dmer.h"
 #include <sys/time.h>
 
 extern int size, rank;
+
+int m_n_viz_1a = 0;
+int m_n_viz_1b = 0;
+int m_n_viz_2a = 0;
+int m_n_viz_2b = 0;
+int m_n_viz_ab = 0;
+
+extern int m_target;
+double m_ttt;
 
 //---------------------------------------------------------------------------
 
@@ -33,8 +43,10 @@ double Dmer::calcula_tempo(const unsigned long int ini,
 //---------------------------------------------------------------------------
 
 void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
+  double delta;
   MPI_Status status;
   int result, best;
+  double l_ttt = std::numeric_limits<double>::max();
 
   int jj;
   char arq[256];
@@ -68,6 +80,8 @@ void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
   f5.aloca(sg.n + 5);
   f6.aloca(sg.n + 5);
 
+  m_ttt = std::numeric_limits<double>::max();
+
   /* Grasp */
   gettimeofday(&start, NULL); //marcador de início do processamento
 //   t_ini2  = (unsigned long int) clock();
@@ -75,21 +89,47 @@ void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
       TEST);
 /*  std::cout << std::endl << nome << " GRASP = " << jj << " Tempo = "
       << calcula_tempo(t_ini2, (unsigned long int) clock()) << std::endl; */
-  gettimeofday(&end, NULL);
-  double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6;
-  std::cout << rank << ":" << nome << " GRASP = " << jj << " Tempo = " << delta << std::endl;
+  // gettimeofday(&end, NULL);
+  // delta = ((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6;
+  // std::cout << rank << ":" << nome << " GRASP = " << jj << " Tempo = " << delta << std::endl;
   best = jj;
   /* Processo 0 recebe resultados dos outros processos */
   if (rank == 0) {
     for (int i = 1; i < size; i++) {
-      std::cout << rank << ":esperando processo " << i << " responder." << std::endl;
+      // std::cout << rank << ":esperando processo " << i << " responder." << std::endl;
       MPI_Recv(&result, 1, MPI_INT, i, TAG_FINISHED, MPI_COMM_WORLD, &status);
-      std::cout << "\x1b[1;38m"  << rank << ":resposta [" << result << "] do processo [" << i
-          << "]." << "\x1b[0m"  << std::endl;
+      // std::cout << "\x1b[1;38m"  << rank << ":resposta [" << result << "] do processo [" << i
+      //     << "]." << "\x1b[0m"  << std::endl;
       if (result > best) best = result;
+      MPI_Recv(&l_ttt, 1, MPI_DOUBLE, i, TAG_FINISHED, MPI_COMM_WORLD, &status);
+      if (l_ttt < m_ttt) m_ttt = l_ttt;
+      MPI_Recv(&result, 1, MPI_INT, i, TAG_FINISHED, MPI_COMM_WORLD, &status);
+      m_n_viz_1a += result;
+      MPI_Recv(&result, 1, MPI_INT, i, TAG_FINISHED, MPI_COMM_WORLD, &status);
+      m_n_viz_1b += result;
+      MPI_Recv(&result, 1, MPI_INT, i, TAG_FINISHED, MPI_COMM_WORLD, &status);
+      m_n_viz_2a += result;
+      MPI_Recv(&result, 1, MPI_INT, i, TAG_FINISHED, MPI_COMM_WORLD, &status);
+      m_n_viz_2b += result;
+      MPI_Recv(&result, 1, MPI_INT, i, TAG_FINISHED, MPI_COMM_WORLD, &status);
+      m_n_viz_ab += result;
     }
-    std::cout << "\x1b[1;38m" << rank << ":melhor solução[" << best << "]." << "\x1b[0m"
-        << std::endl;
+    gettimeofday(&end, NULL);
+    delta = ((end.tv_sec  - start.tv_sec) * 1000000u + end.tv_usec - start.tv_usec) / 1.e6;
+    //
+    // std::cout << "\x1b[1;36m"  << rank << ":m_n_viz_1a [" << m_n_viz_1a << "]." << "\x1b[0m"
+    //     << std::endl;
+    // std::cout << "\x1b[1;36m"  << rank << ":m_n_viz_1b [" << m_n_viz_1b << "]." << "\x1b[0m"
+    //     << std::endl;
+    // std::cout << "\x1b[1;36m"  << rank << ":m_n_viz_2a [" << m_n_viz_2a << "]." << "\x1b[0m"
+    //     << std::endl;
+    // std::cout << "\x1b[1;36m"  << rank << ":m_n_viz_2b [" << m_n_viz_2b << "]." << "\x1b[0m"
+    //     << std::endl;
+    // std::cout << "\x1b[1;36m"  << rank << ":m_n_viz_ab [" << m_n_viz_ab << "]." << "\x1b[0m"
+    //     << std::endl;
+
+    std::cout << jj << "," << delta << "," << m_target << "," << m_ttt << std::endl;
+
   }
 
   /* desaloca */

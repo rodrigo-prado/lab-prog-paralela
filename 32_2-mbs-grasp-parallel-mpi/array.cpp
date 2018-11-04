@@ -24,8 +24,7 @@ extern int naloc;
 //---------------------------------------------------------------------------
 
 template <class T>
-class Array
-{
+class Array {
 public:
   Array():pType(NULL),size(0){}
   Array(const int tam, T val = 0);
@@ -56,16 +55,14 @@ private:
 
 template <class T>
 Array<T>::Array(const int tam, const T val):
-  pType(NULL),size(0)
-{
+  pType(NULL),size(0) {
   redefine(tam, val);
 }
 
 //---------------------------------------------------------------------------
 
 template <class T>
-Array<T>::Array(const Array &rhs)
-{
+Array<T>::Array(const Array &rhs) {
 #ifdef DEBUG_ARRAY
   std::cout<<"Array copy constructor !!!!!!!!!!!!!"<<std::endl;
 #endif
@@ -78,8 +75,7 @@ Array<T>::Array(const Array &rhs)
 //---------------------------------------------------------------------------
 
 template <class T>
-T& Array<T>::operator[](int i)
-{
+T& Array<T>::operator[](int i) {
 #ifdef DEBUG_ARRAY
   if(i >= size || i < 0)
     mserro("Array","[]","[i] invalido",5);
@@ -90,8 +86,7 @@ T& Array<T>::operator[](int i)
 //---------------------------------------------------------------------------
 
 template <class T>
-const T& Array<T>::operator[](int i) const
-{
+const T& Array<T>::operator[](int i) const {
 #ifdef DEBUG_ARRAY
   if(i >= size || i< 0)
     mserro("Array","[] const","[i] invalido",5);
@@ -102,10 +97,9 @@ const T& Array<T>::operator[](int i) const
 //---------------------------------------------------------------------------
 
 template <class T>
-Array<T>& Array<T>::operator=(const Array &rhs)
-{
+Array<T>& Array<T>::operator=(const Array &rhs) {
 #ifdef DEBUG_ARRAY
-  std::cout<<"Array operator= !!!!!!!!!!!!!"<<std::endl;
+  std::cout << "Array operator= !!!!!!!!!!!!!" << std::endl;
 #endif
   //if(this == &(rhs))
   //return *this;
@@ -120,8 +114,7 @@ Array<T>& Array<T>::operator=(const Array &rhs)
 //---------------------------------------------------------------------------
 
 template <class T>
-int Array<T>::gera_key1(const int tam)
-{
+int Array<T>::gera_key1(const int tam) {
   int t,key1 = 0;
 
   if(tam != 0)
@@ -136,8 +129,7 @@ int Array<T>::gera_key1(const int tam)
 //---------------------------------------------------------------------------
 
 template <class T>
-void Array<T>::realoca(const int novo_tam, const T val)
-{
+void Array<T>::realoca(const int novo_tam, const T val) {
   int i;
 
   if(novo_tam <= size)
@@ -161,21 +153,18 @@ void Array<T>::realoca(const int novo_tam, const T val)
 //---------------------------------------------------------------------------
 
 template <class T>
-void Array<T>::aloca(const int novo_tam)
-{
+void Array<T>::aloca(const int novo_tam) {
   del();
-  if(novo_tam != 0)
-    {
-      pType = new(std::nothrow) T[novo_tam];
-      if(pType == NULL)
-	{
-	  std::cout<<"tam = "<<novo_tam<<std::endl;
-	mserro("Array","aloca","Falta de memoria",0);
-	}
-#ifdef DEBUG_ARRAY
-      ++naloc;
-#endif
+  if (novo_tam != 0) {
+    pType = new(std::nothrow) T[novo_tam];
+    if (pType == NULL) {
+      std::cout << "tam = " << novo_tam << std::endl;
+      mserro("Array","aloca","Falta de memoria",0);
     }
+#ifdef DEBUG_ARRAY
+    ++naloc;
+#endif
+  }
   else
     pType = NULL;
   size = novo_tam;
@@ -184,8 +173,7 @@ void Array<T>::aloca(const int novo_tam)
 //---------------------------------------------------------------------------
 
 template <class T>
-void Array<T>::redefine(const int novo_tam, const T val)
-{
+void Array<T>::redefine(const int novo_tam, const T val) {
   aloca(novo_tam);
   set(val);
 }
@@ -193,64 +181,57 @@ void Array<T>::redefine(const int novo_tam, const T val)
 //---------------------------------------------------------------------------
 
 template <class T>
-void Array<T>::set(const T val)
-{
-  for(int i=0;i<size;++i)
+void Array<T>::set(const T val) {
+  for(int i = 0; i < size;++i)
     pType[i] = val;
 }
 
 //---------------------------------------------------------------------------
 
 template <class T>
-void Array<T>::set(const T val, const int fim, const int ini)
-{
+void Array<T>::set(const T val, const int fim, const int ini) {
 #ifdef DEBUG_ARRAY
   if(ini < 0 || fim > size)
     mserro("Array","set","liminte invalido",9);
 #endif
-  for(int i=ini;i<fim;++i)
+  for(int i = ini; i < fim; ++i)
     pType[i] = val;
 }
 
 //---------------------------------------------------------------------------
 
 template <class T>
-void Array<T>::del()
-{
-  if(pType != NULL)
-    {
-      delete [] pType;
+void Array<T>::del() {
+  if (pType != NULL) {
+    delete [] pType;
 #ifdef DEBUG_ARRAY
-      ++nfree;
+    ++nfree;
 #endif
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
 
 template <class T>
-void Array<T>::ajusta(const int novo_tam)
-{
+void Array<T>::ajusta(const int novo_tam) {
   T* novo_pType;
 
-  if(novo_tam == size) return;
+  if (novo_tam == size) return;
 
-  if(novo_tam > size)
+  if (novo_tam > size)
     mserro("Array","ajusta","Tamalho maior do que o existente",9);
 
-  if(novo_tam != 0)
-    {
-      novo_pType = new(std::nothrow) T[novo_tam];
-      if(novo_pType == NULL)
-	mserro("Array","ajusta","Falta de memoria",0);
+  if (novo_tam != 0) {
+    novo_pType = new(std::nothrow) T[novo_tam];
+    if (novo_pType == NULL)
+      mserro("Array","ajusta","Falta de memoria",0);
 #ifdef DEBUG_ARRAY
-      ++naloc;
+    ++naloc;
 #endif
 
-      for(int i=0;i<novo_tam;++i)
-	novo_pType[i] = pType[i];
-    }
-  else
+    for(int i = 0; i < novo_tam; ++i)
+      novo_pType[i] = pType[i];
+  } else
     novo_pType = NULL;
   del();
   size = novo_tam;
@@ -268,7 +249,6 @@ void Array<T>::imprime() {
 }
 
 //---------------------------------------------------------------------------
-
 
 #endif
 
