@@ -187,13 +187,13 @@ def exec_batch(versions, repeat, file="danoint.mps.g.g", maxiter=100, maxtime=30
             # print version + " " + str(i)
             output, error = exec_command(command)
             # print output
-            m = re.search("[0-9]*,([0-9]*[.][0-9]*),[0-9]*,([0-9]*[.][0-9]*)", output, re.M)
+            # m = re.search("[0-9]*,([0-9]*[.][0-9]*),[0-9]*,([0-9]*[.][0-9]*)", output, re.M)
             # print m.group(0)
             # print m.group(1)
             # print m.group(2)
             # print m
-            exec_times.append(float(m.group(1)))
-            exec_times_ttt.append(float(m.group(2)))
+            # exec_times.append(float(m.group(1)))
+            # exec_times_ttt.append(float(m.group(2)))
             # with open(output_path + "/error_output", "w") as f : f.write(error)
             # output, error = exec_command("awk '/^[0-9]*.[0-9]*$/{print $1};' error_output")
             # exec_times.append(float(output.split()[0]))
@@ -209,14 +209,14 @@ def exec_batch(versions, repeat, file="danoint.mps.g.g", maxiter=100, maxtime=30
             #         f.write("," + str(exec_times[i]))
         # with open("./kirchhoff_executions.csv", "a") as f:
         #     f.write("\n")
-        avg_exec_times = numpy.mean(exec_times)
-        std_exec_times = numpy.std(exec_times)
-        with open("./dmer_executions.csv", "a") as f:
-            f.write(str(avg_exec_times) + "," + str(std_exec_times) + "\n")
-        avg_exec_times = numpy.mean(exec_times_ttt)
-        std_exec_times = numpy.std(exec_times_ttt)
-        with open("./dmer_executions.csv", "a") as f:
-            f.write(str(avg_exec_times) + "," + str(std_exec_times) + "\n")
+        # avg_exec_times = numpy.mean(exec_times)
+        # std_exec_times = numpy.std(exec_times)
+        # with open("./dmer_executions.csv", "a") as f:
+        #     f.write(str(avg_exec_times) + "," + str(std_exec_times) + "\n")
+        # avg_exec_times = numpy.mean(exec_times_ttt)
+        # std_exec_times = numpy.std(exec_times_ttt)
+        # with open("./dmer_executions.csv", "a") as f:
+        #     f.write(str(avg_exec_times) + "," + str(std_exec_times) + "\n")
         # print "Average of execution times: " + str(avg_exec_times)
         # print "Standart deviation: " + str(std_exec_times)
         # out_file += version + ", " + str(avg_exec_times) + ", " + str(std_exec_times) + "\n"
@@ -277,8 +277,8 @@ with open(output_path + "/dmer_executions.csv", "w") as f:
 #     f.write("NFC=32, FWIDTH=1\n")
 
 with open("./dmer_executions.csv", "a") as f:
-    f.write("danoint.mps.g.g\n")
-exec_dmer(repeat, "danoint.mps.g.g", 100, 2147483647, 96)
+    f.write("danoint\n")
+exec_dmer(repeat, "danoint", 100, 2147483647, 96)
 
 with open("./dmer_executions.csv", "a") as f:
     f.write("bienst1\n")
@@ -290,15 +290,15 @@ exec_dmer(repeat, "1-t0.300-to0.05-y2003-m11-p90-signed", 100, 2147483647, 336)
 
 with open("./dmer_executions.csv", "a") as f:
     f.write("r80x800\n")
-exec_dmer(repeat, "r80x800", 100, 2147483647, 113)
+exec_dmer(repeat, "r80x800", 100, 2147483647, 820)
 
 with open("./dmer_executions.csv", "a") as f:
     f.write("neos21\n")
-exec_dmer(repeat, "neos21", 100, 2147483647, 587)
+exec_dmer(repeat, "neos21", 100, 2147483647, 191)
 
 with open("./dmer_executions.csv", "a") as f:
     f.write("n12-3\n")
-exec_dmer(repeat, "n12-3", 100, 2147483647, 1273)
+exec_dmer(repeat, "n12-3", 100, 2147483647, 2214)
 
 # exec_dmer(repeat, "danoint.mps.g.g", 100, 30000, 96)
 # exec_dmer(repeat, "danoint.mps.g.g", 100, 30000, 96)
