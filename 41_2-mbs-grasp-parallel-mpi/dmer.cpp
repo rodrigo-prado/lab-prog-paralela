@@ -128,7 +128,7 @@ void Dmer::le_dados_grasp(int MaxIter, int MaxTime) {
     // std::cout << "\x1b[1;36m"  << rank << ":m_n_viz_ab [" << m_n_viz_ab << "]." << "\x1b[0m"
     //     << std::endl;
 
-    std::cout << jj << "," << delta << "," << m_target << "," << m_ttt << std::endl;
+    std::cout << best << "," << delta << "," << m_target << "," << m_ttt << std::endl;
 
   }
 
