@@ -276,9 +276,17 @@ with open(output_path + "/dmer_executions.csv", "w") as f:
 # with open("./kirchhoff.csv", "a") as f:
 #     f.write("NFC=32, FWIDTH=1\n")
 
-# with open("./dmer_executions.csv", "a") as f:
-#     f.write("danoint.mps.g.g\n")
-# exec_dmer(repeat, "danoint.mps.g.g", 100, 2147483647, 96)
+with open("./dmer_executions.csv", "a") as f:
+    f.write("danoint.mps.g.g\n")
+exec_dmer(repeat, "danoint.mps.g.g", 100, 2147483647, 96)
+
+with open("./dmer_executions.csv", "a") as f:
+    f.write("bienst1\n")
+exec_dmer(repeat, "bienst1", 100, 2147483647, 90)
+
+with open("./dmer_executions.csv", "a") as f:
+    f.write("1-t0.300-to0.05-y2003-m11-p90-signed\n")
+exec_dmer(repeat, "1-t0.300-to0.05-y2003-m11-p90-signed", 100, 2147483647, 336)
 
 with open("./dmer_executions.csv", "a") as f:
     f.write("r80x800\n")
@@ -290,7 +298,7 @@ exec_dmer(repeat, "neos21", 100, 2147483647, 587)
 
 with open("./dmer_executions.csv", "a") as f:
     f.write("n12-3\n")
-exec_dmer(repeat, "n12-3.", 100, 2147483647, 1273)
+exec_dmer(repeat, "n12-3", 100, 2147483647, 1273)
 
 # exec_dmer(repeat, "danoint.mps.g.g", 100, 30000, 96)
 # exec_dmer(repeat, "danoint.mps.g.g", 100, 30000, 96)
