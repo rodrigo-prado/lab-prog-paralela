@@ -37,11 +37,11 @@ float calcula(float local_a, float local_b, int local_n, float h) {
   float x;
 
   integral = (f(local_a) + f(local_b)) / 2.0;
-  x = local_a;
+  // x = local_a;
 
   #pragma omp parallel for reduction(+:integral) private(x)
   for (int i = 1; i < local_n; i++) {
-    x = h * i;
+    x = local_a + (h * i);
     integral += f(x);
   }
   integral *= h;
