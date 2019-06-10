@@ -14,17 +14,15 @@ float f(float x); // função a integrar
 float total = 0.0;   // integral total
 sem_t total_mutex;   /* acesso a variavel total */
 
-main(int argc, char** argv) {
+int main(int argc, char** argv) {
 
   pthread_t thr0, thr1, thr2, thr3, thr4, thr5, thr6, thr7, thr8, thr9, thr10, thr11;
-  int nThrID0;
-  int nThrID1, nThrID2, nThrID3, nThrID4, nThrID5, nThrID6;
-  int nThrID7, nThrID8, nThrID9, nThrID10, nThrID11;
 
-  nThrID0 = 0;
-  nThrID1 = 1; nThrID2 = 2; nThrID3 = 3; nThrID4 = 4;
-  nThrID5 = 5; nThrID6 = 6; nThrID7 = 7; nThrID8 = 8;
-  nThrID9 = 9; nThrID10 = 10; nThrID11 = 11;
+  int nThrID0, nThrID1, nThrID2, nThrID3, nThrID4, nThrID5, nThrID6, nThrID7, nThrID8, nThrID9, \
+      nThrID10, nThrID11;
+
+  nThrID0 = 0; nThrID1 = 1; nThrID2 = 2; nThrID3 = 3; nThrID4 = 4; nThrID5 = 5; nThrID6 = 6;
+  nThrID7 = 7; nThrID8 = 8; nThrID9 = 9; nThrID10 = 10; nThrID11 = 11;
 
   sem_init(&total_mutex, 0, 1);
 
@@ -77,11 +75,13 @@ void integral(int *my_rank) {
   if (*my_rank == p - 1) {
     local_b = local_a + ((local_n + (n % p)) * h);
     integral = calcula(local_a, local_b, local_n + (n % p), h);
-    printf("Thread: %d, local_n: %d, local_a: %f, local_b: %f\n", *my_rank, local_n + (n % p), local_a, local_b);
+    printf("Thread: %d, local_n: %d, local_a: %f, local_b: %f\n", *my_rank, local_n + (n % p),
+        local_a, local_b);
   } else {
     local_b = local_a + (local_n * h);
     integral = calcula(local_a, local_b, local_n, h);
-    printf("Thread: %d, local_n: %d, local_a: %f, local_b: %f\n", *my_rank, local_n, local_a, local_b);
+    printf("Thread: %d, local_n: %d, local_a: %f, local_b: %f\n", *my_rank, local_n, local_a,
+        local_b);
   }
 
   sem_wait(&total_mutex);
