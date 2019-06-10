@@ -1,0 +1,14 @@
+# MACROS
+
+MPICC   = cc
+
+# DEPENDENCIES
+
+integr_trapez_trat_rest.exe: integr_trapez_trat_rest.c
+	$(MPICC) integr_trapez_trat_rest_pthread.c -o integr_trapez_trat_rest_pthread.x -lm -pthread
+	@echo Compilado com Sucesso!
+
+clean:
+	rm -f core integr_trapez_trat_rest_pthread.x
+
+
