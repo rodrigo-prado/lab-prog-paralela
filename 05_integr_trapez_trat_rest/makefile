@@ -9,6 +9,4 @@ integr_trapez_trat_rest.exe: integr_trapez_trat_rest.c
 	@echo Compilado com Sucesso!
 
 clean:
-	rm -f core integr_trapez_trat_rest.exe 
-	
-
+	rm -f core integr_trapez_trat_rest.exe
