@@ -1,0 +1,26 @@
+gcc -o integr_trapez_trat_rest_omp.x -lm -fopenmp integr_trapez_trat_rest_omp.c
+
+
+ 1144  gcc integr_trapez_trat_rest_pthread.c -O integr_trapez_trat_rest_pthread.x
+ 1145  gcc -o integr_trapez_trat_rest_pthread.x -lm integr_trapez_trat_rest_pthread.x
+ 1146  gcc -o integr_trapez_trat_rest_pthread.x -lm integr_trapez_trat_rest_pthread.c
+ 1148  gcc -o integr_trapez_trat_rest_pthread.x -lm integr_trapez_trat_rest_pthread.c
+ 1149  gcc -o integr_trapez_trat_rest_pthread.x -lm -pthread integr_trapez_trat_rest_pthread.c
+ 1151  gcc -o integr_trapez_trat_rest_pthread.x -lm -pthread integr_trapez_trat_rest_pthread.c
+ 1175  gcc -o integr_trapez_trat_rest_omp.x integr_trapez_trat_rest_omp.c -lm -openmp
+ 1176  gcc -o integr_trapez_trat_rest_omp.x -lm -openmp integr_trapez_trat_rest_omp.c
+ 1177  gcc -o integr_trapez_trat_rest_omp.x -lm -lopenmp integr_trapez_trat_rest_omp.c
+ 1178  gcc -o integr_trapez_trat_rest_omp.x -lm -openmp integr_trapez_trat_rest_omp.c
+ 1179  gcc -o integr_trapez_trat_rest_omp.x -lm -fopenmp integr_trapez_trat_rest_omp.c
+ 1182  gcc -o integr_trapez_trat_rest_omp.x -lm -fopenmp integr_trapez_trat_rest_omp.c
+ 1186  gcc -o integr_trapez_trat_rest_omp.x -lm -fopenmp integr_trapez_trat_rest_omp.c
+ 1188  gcc -o integr_trapez_trat_rest_omp.x -lm -fopenmp integr_trapez_trat_rest_omp.c
+ 1190  gcc -o integr_trapez_trat_rest_omp.x -lm -fopenmp integr_trapez_trat_rest_omp.c
+ 1192  gcc -o integr_trapez_trat_rest_omp.x -lm -fopenmp integr_trapez_trat_rest_omp.c
+ 1196  gcc -o integr_trapez_trat_rest_omp.x -lm -fopenmp integr_trapez_trat_rest_omp.c
+ 1198  history | grep gcc
+
+mpicc -o integr_trapez_trat_rest_hibrido.x -lm -fopenmp integr_trapez_trat_rest_hibrido.c
+mpicc -o integr_trapez_trat_rest.x -lm -fopenmp integr_trapez_trat_rest.c
+
+./integr_trapez_trat_rest_hibrido.x
